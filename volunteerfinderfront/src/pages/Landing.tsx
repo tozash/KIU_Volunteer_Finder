@@ -1,8 +1,12 @@
-import { useState } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { StrictMode, useState } from 'react'
 import EventCard from '@/components/event/EventCard'
 import useDebounce from '@/lib/useDebounce'
-import { dummyEvents, Event } from '@/lib/dummyData'
+import { dummyEvents } from '@/lib/dummyData'
+import type { Event } from '@/lib/dummyData'
+import { Link, useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
+
+
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
   const term = search.toLowerCase()
@@ -22,6 +26,7 @@ const Landing = () => {
     queryFn: () => fetchEvents(debounced),
   })
 
+
   return (
     <div className="p-4">
       <input
@@ -32,12 +37,17 @@ const Landing = () => {
         className="border p-2 rounded w-full md:w-1/2 mb-4"
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-        {events.map((event) => (
-          <EventCard key={event.id} event={event} />
+        {events.map((event: Event) => (
+          <Link to={`/events/${event.id}`} key={event.id}>
+            <EventCard event={event} />
+          </Link>
         ))}
-        <div className="flex items-center justify-center border-2 border-dashed rounded p-4 cursor-pointer hover:bg-gray-50">
+        <Link
+          to="/create-event"
+          className="flex items-center justify-center border-2 border-dashed rounded p-4 cursor-pointer hover:bg-gray-50"
+        >
           <span className="text-blue-600 font-medium">+ Create Event</span>
-        </div>
+        </Link>
       </div>
     </div>
   )

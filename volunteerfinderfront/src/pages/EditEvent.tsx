@@ -1,5 +1,6 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { dummyEvents, Event } from '@/lib/dummyData'
+import { dummyEvents } from '@/lib/dummyData'
+import type { Event } from '@/lib/dummyData'
 
 interface FormValues {
   title: string

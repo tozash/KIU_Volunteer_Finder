@@ -1,7 +1,8 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ApplicationModal from '@/components/event/ApplicationModal'
-import { dummyEvents, Event } from '@/lib/dummyData'
+import { dummyEvents } from '@/lib/dummyData'
+import type { Event } from '@/lib/dummyData'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
   return dummyEvents.find((e) => e.id === id)

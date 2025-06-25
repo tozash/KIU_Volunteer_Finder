@@ -1,18 +1,23 @@
-import './index.css'
 import NavBar from '@/components/common/NavBar'
 import Footer from '@/components/common/Footer'
+import { Routes, Route } from 'react-router-dom'
 import Landing from '@/pages/Landing'
-import { AuthProvider } from '@/lib/useAuth'
+import EventDetail from '@/pages/EventDetail'
+import CreateEvent from '@/pages/CreateEvent'
 
 function App() {
   return (
-    <AuthProvider>
+    <>
       <NavBar />
       <main className="p-4">
-        <Landing />
+        <Routes>
+          <Route path="/" element={<Landing />} />
+          <Route path="/events/:id" element={<EventDetail />} />
+          <Route path="/create-event" element={<CreateEvent />} />
+        </Routes>
       </main>
       <Footer />
-    </AuthProvider>
+    </>
   )
 }
 

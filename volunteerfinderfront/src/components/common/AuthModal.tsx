@@ -62,25 +62,25 @@ const AuthModal = ({ open, onClose }: Props) => {
                 {...registerField('name')}
                 className="border p-1 w-full rounded"
                 placeholder="Name"
-                aria-invalid={!!errors.name}
+                aria-invalid={mode === 'register' && 'name' in errors}
               />
               <input
                 {...registerField('surname')}
                 className="border p-1 w-full rounded"
                 placeholder="Surname"
-                aria-invalid={!!errors.surname}
+                aria-invalid={mode === 'register' && 'surname' in errors}
               />
               <input
                 {...registerField('dob')}
                 className="border p-1 w-full rounded"
                 placeholder="Date of birth"
-                aria-invalid={!!errors.dob}
+                aria-invalid={mode === 'register' && 'dob' in errors}
               />
               <input
                 {...registerField('sex')}
                 className="border p-1 w-full rounded"
                 placeholder="Sex"
-                aria-invalid={!!errors.sex}
+                aria-invalid={mode === 'register' && 'sex' in errors}
               />
             </>
           )}
