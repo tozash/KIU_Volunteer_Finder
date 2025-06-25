@@ -1,16 +1,23 @@
-import express from 'express';
-import * as dotenv from 'dotenv';
-import usersRouter from './routes/users';
+import Fastify from 'fastify'
+import userRoutes from './routes/users'
+import { db } from './firebase'
 
-dotenv.config();
+const app = Fastify()
 
-const app = express();
-app.use(express.json());
+// Decorate Fastify with Firestore instance
+app.decorate('db', db)
 
-// Register user-related routes under /api/users
-app.use('/api/users', usersRouter);
+// Register routes
+app.register(userRoutes, { prefix: '/api/users' })
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`✅ API running at http://localhost:${PORT}`);
-});
+const start = async () => {
+  try {
+    await app.listen({ port: 3000 })
+    console.log('✅ Fastify API running at http://localhost:3000')
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
+}
+
+start()
