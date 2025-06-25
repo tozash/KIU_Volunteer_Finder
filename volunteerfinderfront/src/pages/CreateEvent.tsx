@@ -1,6 +1,8 @@
 import { useFieldArray, useForm } from 'react-hook-form'
 import { dummyEvents } from '@/lib/dummyData'
 import type { Event } from '@/lib/dummyData'
+import { useNavigate } from 'react-router-dom'
+
 
 interface FormValues {
   title: string
@@ -12,6 +14,8 @@ interface FormValues {
 }
 
 const CreateEvent = () => {
+  const navigate = useNavigate()
+
   const { register, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       title: '',
@@ -36,16 +40,19 @@ const CreateEvent = () => {
       questions: data.questions.map((q) => q.value),
     }
     dummyEvents.push(newEvent)
-    console.log('Created event', newEvent)
+    navigate(`/events/${newEvent.id}`)
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
-      <input {...register('title')} placeholder="Title" className="border p-1 w-full rounded" />
-      <input type="date" {...register('date')} className="border p-1 w-full rounded" />
-      <input {...register('location')} placeholder="Location" className="border p-1 w-full rounded" />
-      <input {...register('imageUrl')} placeholder="Image URL" className="border p-1 w-full rounded" />
-      <textarea {...register('description')} placeholder="Description" className="border p-1 w-full rounded" />
+    <div className="p-4">
+      <h1 className="text-xl font-bold mb-2">Create Event</h1>
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
+        <input {...register('title')} placeholder="Title" className="border p-1 w-full rounded" />
+        <input type="date" {...register('date')} className="border p-1 w-full rounded" />
+        <input {...register('location')} placeholder="Location" className="border p-1 w-full rounded" />
+        <input {...register('imageUrl')} placeholder="Image URL" className="border p-1 w-full rounded" />
+        <textarea {...register('description')} placeholder="Description" className="border p-1 w-full rounded" />
+
       <div>
         <span className="font-medium">Questions</span>
         {fields.map((field, idx) => (
@@ -63,10 +70,12 @@ const CreateEvent = () => {
           + Add Question
         </button>
       </div>
-      <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
-        Create
-      </button>
-    </form>
+        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+          Create
+        </button>
+      </form>
+    </div>
+
   )
 }
 

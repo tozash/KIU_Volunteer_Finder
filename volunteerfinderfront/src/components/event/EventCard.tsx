@@ -1,3 +1,5 @@
+
+import { Link } from 'react-router-dom'
 interface Event {
   id: number
   title: string
@@ -12,7 +14,10 @@ type Props = {
 }
 
 const EventCard = ({ event }: Props) => (
-  <div className="relative border rounded overflow-hidden shadow-sm">
+  <Link
+    to={`/events/${event.id}`}
+    className="relative border rounded overflow-hidden shadow-sm block hover:bg-gray-50"
+  >
     <img
       src={event.imageUrl}
       alt={event.title}
@@ -27,7 +32,8 @@ const EventCard = ({ event }: Props) => (
         {event.date} • {event.location}
       </p>
     </div>
-  </div>
+  </Link>
+
 )
 
 export default EventCard

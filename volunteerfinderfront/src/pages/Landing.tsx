@@ -1,3 +1,4 @@
+
 import { StrictMode, useState } from 'react'
 import EventCard from '@/components/event/EventCard'
 import useDebounce from '@/lib/useDebounce'

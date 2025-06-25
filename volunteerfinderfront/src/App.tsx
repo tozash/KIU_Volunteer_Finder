@@ -5,6 +5,7 @@ import Landing from '@/pages/Landing'
 import EventDetail from '@/pages/EventDetail'
 import CreateEvent from '@/pages/CreateEvent'
 
+
 function App() {
   return (
     <>
@@ -18,6 +19,7 @@ function App() {
       </main>
       <Footer />
     </>
+
   )
 }
 
