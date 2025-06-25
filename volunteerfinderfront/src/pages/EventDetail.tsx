@@ -5,6 +5,7 @@ import { dummyEvents, Event } from '@/lib/dummyData'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
   return dummyEvents.find((e) => e.id === id)
+
 }
 
 const renderMarkdown = (md: string) => {

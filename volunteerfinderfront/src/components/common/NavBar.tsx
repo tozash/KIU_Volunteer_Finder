@@ -6,6 +6,7 @@ const NavBar = () => {
   const [open, setOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
   const { user, logout } = useAuth()
+
   return (
     <nav className="flex items-center justify-between p-4 border-b">
       <div className="font-bold">Logo</div>
