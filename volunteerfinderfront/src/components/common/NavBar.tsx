@@ -1,5 +1,4 @@
 import { useState } from 'react'
-
 import AuthModal from '@/components/common/AuthModal'
 import { useAuth } from '@/lib/useAuth'
 
