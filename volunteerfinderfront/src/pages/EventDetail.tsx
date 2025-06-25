@@ -3,11 +3,11 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 
 import ApplicationModal from '@/components/event/ApplicationModal'
-import { dummyEvents } from '@/lib/dummyData'
 import type { Event } from '@/lib/dummyData'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
-  return dummyEvents.find((e) => e.id === id)
+  const res = await fetch(`/events/${id}`)
+  return res.json()
 }
 
 const renderMarkdown = (md: string) => {
@@ -38,7 +38,7 @@ const EventDetail = () => {
         alt={event.title}
         className="w-full h-64 object-cover"
       />
-      <div className="max-w-2xl mx-auto p-4">
+      <div className="max-w-screen-lg mx-auto p-4">
         <h1 className="text-2xl font-bold mb-1">{event.title}</h1>
         <p className="text-gray-500 mb-4">
           {event.date} • {event.location}

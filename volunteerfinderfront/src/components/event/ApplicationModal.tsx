@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form'
+import { useToast } from '@/components/common/Toast'
 
 interface Props {
   open: boolean
@@ -15,6 +16,7 @@ const ApplicationModal = ({ open, onClose, eventId, questions }: Props) => {
   const { register, handleSubmit } = useForm<FormValues>({
     defaultValues: { answers: questions.map(() => '') },
   })
+  const addToast = useToast()
 
   const onSubmit = async (values: FormValues) => {
     await fetch(`/events/${eventId}/applications`, {
@@ -22,6 +24,7 @@ const ApplicationModal = ({ open, onClose, eventId, questions }: Props) => {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(values),
     })
+    addToast('Application submitted')
     onClose()
   }
 

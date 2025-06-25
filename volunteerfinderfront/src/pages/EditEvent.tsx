@@ -4,6 +4,7 @@ import { dummyEvents } from '@/lib/dummyData'
 import type { Event } from '@/lib/dummyData'
 
 import { useNavigate, useParams } from 'react-router-dom'
+import { useToast } from '@/components/common/Toast'
 
 
 interface FormValues {
@@ -18,10 +19,11 @@ interface FormValues {
 const EditEvent = () => {
   const { id } = useParams()
   const navigate = useNavigate()
+  const addToast = useToast()
   const event = dummyEvents.find((e) => e.id === Number(id))
 
   if (!event) {
-    return <div className="p-4">Event not found</div>
+    return <div className="p-4 max-w-screen-lg mx-auto">Event not found</div>
   }
 
   const { register, control, handleSubmit } = useForm<FormValues>({
@@ -44,12 +46,12 @@ const EditEvent = () => {
     event.imageUrl = data.imageUrl
     event.description = data.description
     event.questions = data.questions.map((q) => q.value)
-
+    addToast('Event updated')
     navigate(`/events/${event.id}`)
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-screen-lg mx-auto">
       <h1 className="text-xl font-bold mb-2">Edit Event</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
         <input {...register('title')} placeholder="Title" className="border p-1 w-full rounded" />

@@ -21,3 +21,18 @@ export const dummyEvents: Event[] = [
     questions: ['Why do you want to join?', 'Have you volunteered before?'],
   },
 ]
+
+export interface Application {
+  id: number
+  eventId: number
+  name: string
+  status: 'pending' | 'accepted' | 'denied' | 'canceled'
+}
+
+export const dummyApplications: Application[] = [
+  { id: 1, eventId: 1, name: 'Alice', status: 'pending' },
+  { id: 2, eventId: 1, name: 'Bob', status: 'accepted' },
+  { id: 3, eventId: 1, name: 'Carol', status: 'denied' },
+]
+
+export const currentUserName = 'Alice'
