@@ -6,34 +6,48 @@ interface Event {
   date: string
   location: string
   imageUrl: string
-  status: 'open' | 'closed'
+  status: 'open' | 'closed' | 'full'
 }
 
 type Props = {
   event: Event
 }
 
+const statusClasses = {
+  open: 'bg-primary',
+  closed: 'bg-gray-400',
+  full: 'bg-accent',
+} as const
+
 const EventCard = ({ event }: Props) => (
   <Link
     to={`/events/${event.id}`}
-    className="relative border rounded overflow-hidden shadow-sm block hover:bg-gray-50"
+    className="block rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
   >
-    <img
-      src={event.imageUrl}
-      alt={event.title}
-      className="w-full h-48 object-cover"
-    />
-    <span className="absolute top-2 left-2 bg-blue-600 text-white text-xs px-2 py-1 rounded">
-      {event.status === 'open' ? 'Open' : 'Closed'}
-    </span>
+    <div className="relative overflow-hidden">
+      <img
+        src={event.imageUrl}
+        alt={event.title}
+        className="w-full h-40 object-cover rounded-t-2xl transition-transform duration-200 hover:scale-105"
+      />
+      <span
+        className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${statusClasses[event.status]}`}
+      >
+        {event.status === 'open'
+          ? 'Open'
+          : event.status === 'closed'
+            ? 'Closed'
+            : 'Full'}
+      </span>
+    </div>
     <div className="p-4">
-      <h3 className="font-semibold text-lg">{event.title}</h3>
-      <p className="text-sm text-gray-500">
-        {event.date} • {event.location}
-      </p>
+      <h4 className="font-semibold text-lg line-clamp-2">{event.title}</h4>
+      <div className="mt-1 text-sm">
+        <span className="font-medium">{event.date}</span>
+        <span className="block font-normal">{event.location}</span>
+      </div>
     </div>
   </Link>
-
 )
 
 export default EventCard

@@ -4,7 +4,7 @@ export interface Event {
   date: string
   location: string
   imageUrl: string
-  status: 'open' | 'closed'
+  status: 'open' | 'closed' | 'full'
   description: string
   questions: string[]
 }
