@@ -1,21 +1,16 @@
 
-import { StrictMode, useState } from 'react'
+import { useState } from 'react'
 import EventCard from '@/components/event/EventCard'
 import useDebounce from '@/lib/useDebounce'
-import { dummyEvents } from '@/lib/dummyData'
 import type { Event } from '@/lib/dummyData'
-import { Link, useParams } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
-  const term = search.toLowerCase()
-  return dummyEvents.filter(
-    (e) =>
-      e.title.toLowerCase().includes(term) ||
-      e.location.toLowerCase().includes(term),
-  )
+  const res = await fetch(`/events?search=${encodeURIComponent(search)}`)
+  return res.json()
 }
 
 const Landing = () => {
@@ -29,7 +24,7 @@ const Landing = () => {
 
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-screen-lg mx-auto">
       <input
         value={search}
         onChange={(e) => setSearch(e.target.value)}

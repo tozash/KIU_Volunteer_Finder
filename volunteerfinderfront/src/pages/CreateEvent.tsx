@@ -2,6 +2,7 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { dummyEvents } from '@/lib/dummyData'
 import type { Event } from '@/lib/dummyData'
 import { useNavigate } from 'react-router-dom'
+import { useToast } from '@/components/common/Toast'
 
 
 interface FormValues {
@@ -15,6 +16,7 @@ interface FormValues {
 
 const CreateEvent = () => {
   const navigate = useNavigate()
+  const addToast = useToast()
 
   const { register, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -40,11 +42,12 @@ const CreateEvent = () => {
       questions: data.questions.map((q) => q.value),
     }
     dummyEvents.push(newEvent)
+    addToast('Event created')
     navigate(`/events/${newEvent.id}`)
   }
 
   return (
-    <div className="p-4">
+    <div className="p-4 max-w-screen-lg mx-auto">
       <h1 className="text-xl font-bold mb-2">Create Event</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
         <input {...register('title')} placeholder="Title" className="border p-1 w-full rounded" />
