@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
+import applicationRoutes from './routes/applications'
 import userRoutes from './routes/users'
-import { db } from './firebase'
+import { db } from './plugins/firebase'
 
 const app = Fastify()
 
@@ -9,6 +10,7 @@ app.decorate('db', db)
 
 // Register routes
 app.register(userRoutes, { prefix: '/api/users' })
+app.register(applicationRoutes, { prefix: '/api/applications' })
 
 const start = async () => {
   try {
