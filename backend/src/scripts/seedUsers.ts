@@ -13,6 +13,7 @@ async function seedRandomUsers(count: number = 5) {
       email: faker.internet.email(),
       username: faker.internet.userName(),
       password: faker.internet.password(), // In production: hash this!
+      applications: [],
     };
 
     await db.collection('users').doc(user.user_id).set(user);

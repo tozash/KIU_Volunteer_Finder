@@ -1,3 +1,5 @@
+import { Application } from './application';
+
 export interface User {
   user_id: string;          
   first_name: string;
@@ -7,4 +9,5 @@ export interface User {
   email: string;
   username: string;
   password: string;
+  applications: Application[];
 }
