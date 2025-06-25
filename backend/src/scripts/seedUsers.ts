@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { db } from '../firebase';
+import { db } from '../plugins/firebase';
 import { User } from '../models/user';
 
 async function seedRandomUsers(count: number = 5) {

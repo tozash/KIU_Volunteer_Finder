@@ -1,5 +1,5 @@
 import { faker } from '@faker-js/faker';
-import { db } from '../firebase';
+import { db } from '../plugins/firebase';
 import { Event } from '../models/event';
 
 async function getRandomUserIds(): Promise<string[]> {
@@ -23,6 +23,7 @@ function generateRandomEvent(user_id: string): Event {
       'Do you have previous experience?',
       'What are your strengths?',
     ],
+    applications: []
   };
 }
 
