@@ -17,6 +17,7 @@ const NavBar = () => {
       <input
         type="text"
         placeholder="Search events"
+        aria-label="Search events"
         className="border p-1 rounded md:w-1/3"
       />
       <div className="relative">
