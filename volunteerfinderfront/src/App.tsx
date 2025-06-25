@@ -3,6 +3,7 @@ import NavBar from '@/components/common/NavBar'
 import Footer from '@/components/common/Footer'
 import Landing from '@/pages/Landing'
 
+
 function App() {
   return (
     <>
