@@ -1,13 +1,10 @@
 import { initializeApp, cert } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import * as dotenv from 'dotenv';
-import path from 'path';
+import * as serviceAccount from '../secrets/serviceAccountKey.json';
 
-dotenv.config();
-
-initializeApp({
-  credential: cert(process.env.SERVICE_ACCOUNT_PATH as string),
+const app = initializeApp({
+  credential: cert(serviceAccount as any),
+  projectId: serviceAccount.project_id
 });
 
-const db = getFirestore();
-export { db };
+export const db = getFirestore(app);
