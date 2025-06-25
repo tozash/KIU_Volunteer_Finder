@@ -34,9 +34,7 @@ const Landing = () => {
       />
       <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {events.map((event: Event) => (
-          <Link to={`/events/${event.id}`} key={event.id}>
-            <EventCard event={event} />
-          </Link>
+          <EventCard event={event} key={event.id} />
         ))}
         <Link
           to="/create-event"
