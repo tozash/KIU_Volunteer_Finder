@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Link, useParams } from 'react-router-dom'
+
 import ApplicationModal from '@/components/event/ApplicationModal'
 import { dummyEvents, Event } from '@/lib/dummyData'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
   return dummyEvents.find((e) => e.id === id)
-
 }
 
 const renderMarkdown = (md: string) => {
@@ -19,14 +20,15 @@ const renderMarkdown = (md: string) => {
 }
 
 const EventDetail = () => {
-  const eventId = 1
+  const { id } = useParams()
+  const eventId = Number(id)
   const [open, setOpen] = useState(false)
   const { data: event } = useQuery({
     queryKey: ['event', eventId],
     queryFn: () => fetchEvent(eventId),
   })
 
-  if (!event) return <div>Loading...</div>
+  if (!event) return <div>Event not found</div>
 
   return (
     <div>
@@ -58,6 +60,12 @@ const EventDetail = () => {
           eventId={event.id}
           questions={event.questions}
         />
+        <Link
+          to={`/edit-event/${event.id}`}
+          className="inline-block mt-4 text-blue-600"
+        >
+          Edit Event
+        </Link>
       </div>
     </div>
   )

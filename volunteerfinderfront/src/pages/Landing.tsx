@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
+import { Link } from 'react-router-dom'
+
 import EventCard from '@/components/event/EventCard'
 import useDebounce from '@/lib/useDebounce'
 import { dummyEvents, Event } from '@/lib/dummyData'
@@ -35,9 +37,12 @@ const Landing = () => {
         {events.map((event) => (
           <EventCard key={event.id} event={event} />
         ))}
-        <div className="flex items-center justify-center border-2 border-dashed rounded p-4 cursor-pointer hover:bg-gray-50">
+        <Link
+          to="/create-event"
+          className="flex items-center justify-center border-2 border-dashed rounded p-4 cursor-pointer hover:bg-gray-50"
+        >
           <span className="text-blue-600 font-medium">+ Create Event</span>
-        </div>
+        </Link>
       </div>
     </div>
   )

@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
+
 import AuthModal from '@/components/common/AuthModal'
 import { useAuth } from '@/lib/useAuth'
 
@@ -9,7 +11,9 @@ const NavBar = () => {
 
   return (
     <nav className="flex items-center justify-between p-4 border-b">
-      <div className="font-bold">Logo</div>
+      <Link to="/" className="font-bold" aria-label="Home">
+        Logo
+      </Link>
       <input
         type="text"
         placeholder="Search events"
