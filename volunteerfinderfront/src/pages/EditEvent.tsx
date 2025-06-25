@@ -40,6 +40,7 @@ const EditEvent = () => {
     event.imageUrl = data.imageUrl
     event.description = data.description
     event.questions = data.questions.map((q) => q.value)
+
     navigate(`/events/${event.id}`)
   }
 
@@ -74,6 +75,7 @@ const EditEvent = () => {
         </button>
       </form>
     </div>
+
   )
 }
 

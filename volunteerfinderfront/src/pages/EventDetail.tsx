@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
+
 import ApplicationModal from '@/components/event/ApplicationModal'
 import { dummyEvents, Event } from '@/lib/dummyData'
 

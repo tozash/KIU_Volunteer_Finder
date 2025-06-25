@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom'
 
+import { Link } from 'react-router-dom'
 interface Event {
   id: number
   title: string
@@ -33,6 +33,7 @@ const EventCard = ({ event }: Props) => (
       </p>
     </div>
   </Link>
+
 )
 
 export default EventCard

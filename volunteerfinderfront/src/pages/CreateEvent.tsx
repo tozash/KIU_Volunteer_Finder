@@ -13,6 +13,7 @@ interface FormValues {
 
 const CreateEvent = () => {
   const navigate = useNavigate()
+
   const { register, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       title: '',
@@ -49,6 +50,7 @@ const CreateEvent = () => {
         <input {...register('location')} placeholder="Location" className="border p-1 w-full rounded" />
         <input {...register('imageUrl')} placeholder="Image URL" className="border p-1 w-full rounded" />
         <textarea {...register('description')} placeholder="Description" className="border p-1 w-full rounded" />
+
       <div>
         <span className="font-medium">Questions</span>
         {fields.map((field, idx) => (
@@ -71,6 +73,7 @@ const CreateEvent = () => {
         </button>
       </form>
     </div>
+
   )
 }
 
