@@ -1,22 +1,11 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import ApplicationModal from '@/components/event/ApplicationModal'
+import { dummyEvents, Event } from '@/lib/dummyData'
 
-interface Event {
-  id: number
-  title: string
-  date: string
-  location: string
-  imageUrl: string
-  status: 'open' | 'closed'
-  description: string
-  questions: string[]
-}
+const fetchEvent = async (id: number): Promise<Event | undefined> => {
+  return dummyEvents.find((e) => e.id === id)
 
-const fetchEvent = async (id: number): Promise<Event> => {
-  const res = await fetch(`/events/${id}`)
-  if (!res.ok) throw new Error('Failed to fetch event')
-  return res.json()
 }
 
 const renderMarkdown = (md: string) => {

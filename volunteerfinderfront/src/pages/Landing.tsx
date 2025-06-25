@@ -2,20 +2,15 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import EventCard from '@/components/event/EventCard'
 import useDebounce from '@/lib/useDebounce'
-
-interface Event {
-  id: number
-  title: string
-  date: string
-  location: string
-  imageUrl: string
-  status: 'open' | 'closed'
-}
+import { dummyEvents, Event } from '@/lib/dummyData'
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
-  const res = await fetch(`/events?search=${encodeURIComponent(search)}`)
-  if (!res.ok) throw new Error('Failed to fetch events')
-  return res.json()
+  const term = search.toLowerCase()
+  return dummyEvents.filter(
+    (e) =>
+      e.title.toLowerCase().includes(term) ||
+      e.location.toLowerCase().includes(term),
+  )
 }
 
 const Landing = () => {
