@@ -31,7 +31,11 @@ const NavBar = () => {
       aria-label="main navigation"
     >
       <Link to="/" aria-label="Home" className="flex items-center">
-        <div className="w-10 h-10 bg-gray-300 rounded" />
+      <img
+        src="/kaiKaci_full.svg"
+        alt="Home"
+        className="w-66 h-18 object-contain rounded"
+      />
       </Link>
       <SearchInput
         value={search}
