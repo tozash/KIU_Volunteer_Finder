@@ -30,7 +30,7 @@ const MySubmissions = () => {
               <div className="mt-2 flex gap-2">
                 <Link
                   to={`/events/${app.eventId}`}
-                  className="px-2 py-1 bg-blue-600 text-white rounded"
+                  className="btn-primary px-2 py-1"
                 >
                   View Event
                 </Link>

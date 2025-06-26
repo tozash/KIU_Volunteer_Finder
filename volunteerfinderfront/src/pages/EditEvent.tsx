@@ -54,29 +54,29 @@ const EditEvent = () => {
     <div className="p-4 max-w-screen-lg mx-auto">
       <h1 className="text-xl font-bold mb-2">Edit Event</h1>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
-        <input {...register('title')} placeholder="Title" className="border p-1 w-full rounded" />
-        <input type="date" {...register('date')} className="border p-1 w-full rounded" />
-        <input {...register('location')} placeholder="Location" className="border p-1 w-full rounded" />
-        <input {...register('imageUrl')} placeholder="Image URL" className="border p-1 w-full rounded" />
-        <textarea {...register('description')} placeholder="Description" className="border p-1 w-full rounded" />
+        <input {...register('title')} placeholder="Title" className="input-primary w-full" />
+        <input type="date" {...register('date')} className="input-primary w-full" />
+        <input {...register('location')} placeholder="Location" className="input-primary w-full" />
+        <input {...register('imageUrl')} placeholder="Image URL" className="input-primary w-full" />
+        <textarea {...register('description')} placeholder="Description" className="input-primary w-full" />
       <div>
         <span className="font-medium">Questions</span>
         {fields.map((field, idx) => (
           <div key={field.id} className="flex items-center gap-2 my-1">
             <input
               {...register(`questions.${idx}.value` as const)}
-              className="border p-1 flex-1 rounded"
+              className="input-primary flex-1"
             />
             <button type="button" onClick={() => remove(idx)} className="text-red-500">
               Remove
             </button>
           </div>
         ))}
-        <button type="button" onClick={() => append({ value: '' })} className="text-blue-600">
+        <button type="button" onClick={() => append({ value: '' })} className="text-primary">
           + Add Question
         </button>
       </div>
-        <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded">
+        <button type="submit" className="btn-primary">
           Save
         </button>
       </form>

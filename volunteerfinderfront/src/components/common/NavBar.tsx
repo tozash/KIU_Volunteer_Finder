@@ -1,60 +1,133 @@
-import { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { Link, useSearchParams } from 'react-router-dom'
 
 import AuthModal from '@/components/common/AuthModal'
 import { useAuth } from '@/lib/useAuth'
+import useDebounce from '@/lib/useDebounce'
+import SearchInput from './SearchInput'
+import DropdownMenu from './DropdownMenu'
 
 const NavBar = () => {
   const [open, setOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuth()
+  const [params, setParams] = useSearchParams()
+  const [search, setSearch] = useState(params.get('search') ?? '')
+  const debounced = useDebounce(search, 300)
+
+  // update url param when debounced search changes
+  useEffect(() => {
+    const p = new URLSearchParams(params)
+    if (debounced) p.set('search', debounced)
+    else p.delete('search')
+    setParams(p, { replace: true })
+  }, [debounced])
 
   return (
-    <nav className="flex items-center justify-between p-4 border-b">
-      <Link to="/" className="font-bold" aria-label="Home">
-        Logo
+    <nav
+      className="flex items-center justify-between h-18 px-8 border-b border-grayBorder bg-neutralLight"
+      role="navigation"
+      aria-label="main navigation"
+    >
+      <Link to="/" aria-label="Home" className="flex items-center">
+        <div className="w-10 h-10 bg-gray-300 rounded" />
       </Link>
-      <input
-        type="text"
-        placeholder="Search events"
-        aria-label="Search events"
-        className="border p-1 rounded md:w-1/3"
+      <SearchInput
+        value={search}
+        onChange={setSearch}
+        className="hidden sm:block"
       />
-      <div className="relative">
+      <button
+        className="sm:hidden p-2"
+        aria-label="Open menu"
+        onClick={() => setMobileOpen(true)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 7.65a7.5 7.5 0 010 10.6z"
+          />
+        </svg>
+      </button>
+      <div className="ml-auto hidden sm:block">
         {user ? (
-          <>
+          <DropdownMenu
+            open={open}
+            onClose={() => setOpen(false)}
+            trigger={
+              <button
+                className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutralLight"
+                onClick={() => setOpen(!open)}
+              >
+                <div className="w-8 h-8 rounded-full bg-primary text-neutralLight flex items-center justify-center text-sm font-medium">
+                  {user.name.charAt(0)}
+                </div>
+                <span className="hidden sm:block text-neutralDark font-medium">
+                  {user.name.split(' ')[0]}
+                </span>
+              </button>
+            }
+          >
             <button
-              aria-label="Account menu"
-              className="px-2 py-1 border rounded"
-              onClick={() => setOpen(!open)}
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onClick={() => logout()}
             >
-              {user.name}
+              Logout
             </button>
-            {open && (
-              <ul className="absolute right-0 mt-2 w-40 border rounded bg-white text-black shadow">
-                <li className="px-4 py-2 hover:bg-gray-100 cursor-pointer">Profile</li>
-                <li
-                  className="px-4 py-2 hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    logout()
-                    setOpen(false)
-                  }}
-                >
-                  Logout
-                </li>
-              </ul>
-            )}
-          </>
+          </DropdownMenu>
         ) : (
           <button
-            className="px-2 py-1 border rounded"
+            className="px-4 py-2 bg-primary text-neutralLight rounded-lg font-semibold uppercase text-sm"
             onClick={() => setAuthOpen(true)}
+            aria-label="Login / Register"
           >
-            Login
+            Login / Register
           </button>
         )}
-        <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
       </div>
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-neutralLight p-4 flex flex-col gap-4 z-20">
+          <button
+            aria-label="Close menu"
+            className="self-end text-2xl"
+            onClick={() => setMobileOpen(false)}
+          >
+            ×
+          </button>
+          <SearchInput value={search} onChange={setSearch} />
+          {user ? (
+            <button
+              onClick={() => {
+                logout()
+                setMobileOpen(false)
+              }}
+              className="btn-primary"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthOpen(true)
+                setMobileOpen(false)
+              }}
+              className="btn-primary"
+            >
+              Login / Register
+            </button>
+          )}
+        </div>
+      )}
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </nav>
   )
 }

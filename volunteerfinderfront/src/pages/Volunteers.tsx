@@ -41,7 +41,7 @@ const Volunteers = () => {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border p-1 rounded"
+          className="input-primary w-40"
         >
           <option value="all">All</option>
           <option value="pending">Pending</option>
@@ -52,7 +52,7 @@ const Volunteers = () => {
         <select
           value={sort}
           onChange={(e) => setSort(e.target.value as 'name' | 'status')}
-          className="border p-1 rounded"
+          className="input-primary w-40"
         >
           <option value="name">Sort by Name</option>
           <option value="status">Sort by Status</option>
