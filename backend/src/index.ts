@@ -4,6 +4,7 @@ import userRoutes from './routes/userRoutes'
 import eventRoutes from './routes/eventRoutes'
 import authRoutes from './routes/authRoutes'
 import { db } from './plugins/firebase'
+import { buildApp } from './app'
 
 const app = Fastify({
   logger: true
