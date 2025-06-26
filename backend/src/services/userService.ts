@@ -2,8 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../types/models/user';
-import { Event } from '../types/models/event';
-import events from '../routes/eventRoutes';
+import bcrypt from 'bcrypt';
 
 export async function createUser(
   app: FastifyInstance,
@@ -15,15 +14,17 @@ export async function createUser(
   username: string,
   password: string,
 ): Promise<User> {
+  const hashedPassword = await bcrypt.hash(password, 10); 
+
   const user: User = {
     user_id: uuidv4(),
-    first_name: first_name,
-    last_name: last_name,
-    age: age,
-    sex: sex,
-    email: email,
-    username: username,
-    password: password,
+    first_name,
+    last_name,
+    age,
+    sex,
+    email,
+    username,
+    password: hashedPassword,
     applications: [],
     events: [],
   };
@@ -32,6 +33,7 @@ export async function createUser(
   console.log(`✅ Created user='${user.user_id}'`);
   return user;
 }
+
 
 export async function updateCreatorEventsList(
   app: FastifyInstance,

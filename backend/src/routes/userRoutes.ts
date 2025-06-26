@@ -6,6 +6,7 @@ import { LoginRequest } from '../types/requests/userLogInRequest';
 import { EntityUpdateStatusResponse } from '../types/responses/entityUpdateStatusResponse';
 import { getEntityById} from '../services/entityService';
 import { createUser } from '../services/userService';
+import bcrypt from 'bcrypt';
 
 const users: FastifyPluginAsync = async (app) => {
   // signup 
@@ -60,9 +61,12 @@ const users: FastifyPluginAsync = async (app) => {
         const snapshot = await app.db.collection('users').get();
         const matchingUser = snapshot.docs.find(doc => {
           const data = doc.data();
-          return (data.username === user_identifier || data.email === user_identifier) &&
-                data.password === password;
+          return (data.username === user_identifier || data.email === user_identifier);
         });
+
+        if (!matchingUser || !(await bcrypt.compare(password, matchingUser.data().password))) {
+          return reply.code(401).send({ message: 'Invalid credentials', entity_id: '' });
+        }
 
         if (!matchingUser) {
           return reply.code(401).send({ message: 'Invalid credentials', entity_id: '' });
