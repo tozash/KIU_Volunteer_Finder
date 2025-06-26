@@ -38,16 +38,6 @@ const AuthModal = ({ open, onClose }: Props) => {
     resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema),
   })
 
-  const handleLogin = async (user_identifier: string, password: string) => {
-    const params = new URLSearchParams({ user_identifier, password });
-    const response = await fetch(`/api/users/login?${params.toString()}`, {
-      method: 'GET',
-    });
-    if (!response.ok) {
-      throw new Error('Login failed');
-    }
-    return response.json();
-  };
 
   const onSubmit = async (values: LoginForm | RegisterForm) => {
     if (mode === 'login') {
@@ -55,7 +45,7 @@ const AuthModal = ({ open, onClose }: Props) => {
         await login({ user_identifier: values.email, password: values.password })
         onClose()
       } catch (err) {
-        // handle error (e.g., show error message)
+        console.log(err)
       }
     } else {
       await register(values as RegisterForm)

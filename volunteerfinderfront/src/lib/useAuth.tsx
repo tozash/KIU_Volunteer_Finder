@@ -27,9 +27,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     const storedUser = localStorage.getItem('user')
-    if (storedUser) {
-      setUser(JSON.parse(storedUser))
-    }
+    if (storedUser && storedUser !== 'undefined') {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (err) {
+        console.warn('Failed to parse stored user, clearing it', err)
+        localStorage.removeItem('user')
+      }}
   }, [])
 
   const login: AuthContextValue['login'] = async (data) => {

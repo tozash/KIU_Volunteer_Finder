@@ -12,7 +12,7 @@ import MySubmissions from '@/pages/MySubmissions'
 
 function App() {
   return (
-    <>
+    <div className="flex flex-col vh-screen">
       <NavBar />
       <main className="p-4 max-w-screen-xl mx-auto">
         <Routes>
@@ -29,7 +29,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-    </>
+    </div>
 
   )
 }

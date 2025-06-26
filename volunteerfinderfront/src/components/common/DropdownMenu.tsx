@@ -3,7 +3,7 @@ import { cloneElement, useEffect, useRef } from 'react'
 interface Props {
   open: boolean
   onClose: () => void
-  trigger: React.ReactElement
+  trigger: React.ReactElement<any>
   children: React.ReactNode
 }
 

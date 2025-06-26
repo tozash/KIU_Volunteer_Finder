@@ -63,24 +63,40 @@ const NavBar = () => {
         </svg>
       </button>
       <div className="ml-auto hidden sm:block">
-        {user ? (
+        
+        {user && (user.name || user.email) ? (
           <DropdownMenu
             open={open}
             onClose={() => setOpen(false)}
             trigger={
               <button
                 className="flex items-center gap-2 px-4 py-2 rounded-lg bg-neutralLight"
-                onClick={() => setOpen(!open)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setOpen(!open);
+                }}
               >
                 <div className="w-8 h-8 rounded-full bg-primary text-neutralLight flex items-center justify-center text-sm font-medium">
-                  {user.name.charAt(0)}
+                  {user.email}
                 </div>
                 <span className="hidden sm:block text-neutralDark font-medium">
-                  {user.name.split(' ')[0]}
+                  {user.email}
                 </span>
               </button>
             }
           >
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onClick={() => window.location.href = '/myevents'}
+            >
+              My Events
+            </button>
+            <button
+              className="block w-full text-left px-4 py-2 hover:bg-gray-100"
+              onClick={() => window.location.href = '/mysubmissions'}
+            >
+              My Submissions
+            </button>
             <button
               className="block w-full text-left px-4 py-2 hover:bg-gray-100"
               onClick={() => logout()}
