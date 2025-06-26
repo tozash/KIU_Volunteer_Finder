@@ -49,6 +49,10 @@ This guide explains how to connect the frontend and backend of the KIU Volunteer
 - `GET /api/users/load?entity_id={id}` - Get specific user
 - `GET /api/users/random` - Get random user
 
+#### Auth
+- `POST /api/auth/login` - Log in a user
+- `POST /api/auth/register` - Register a new user
+
 ### Data Structure Changes
 
 The frontend has been updated to work with the backend's data structure:
@@ -125,7 +129,6 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ## Next Steps
 
-- Implement proper authentication system
 - Add error handling and loading states
 - Implement real-time updates using WebSockets
-- Add data validation and sanitization 
+- Add data validation and sanitization
