@@ -4,10 +4,62 @@ import { EntityUpdateStatusResponse } from '../types/responses/entityUpdateStatu
 import { LoadEntityRequest}  from '../types/requests/loadEntityRequest';
 import { createEvent } from '../services/eventService';
 import { getEntityById} from '../services/entityService';
+import { loadEvents }          from '../services/eventService';
+import { LoadEventsRequest }   from '../types/requests/loadEventsRequest';
+import { Event } from '../types/models/event';
 
 
 const events: FastifyPluginAsync = async (app) => {
   // load event
+  app.get<{ Querystring: LoadEventsRequest; Reply: Event[] }>(
+    '/loadMany',
+    async (req, reply) => {
+      try {
+        const events = await loadEvents(app, req.query);
+        return reply.send(events);
+      } catch (err: any) {
+        console.error('❌ Error in /events/list:', err);
+        return reply.code(500).send([]);
+      }
+    }
+  );
+
+  // create an event
+  app.post<{ Body: CreateEventRequest; Reply: EntityUpdateStatusResponse }>(
+    '/create',
+    async (req, reply) => {
+      try {
+        if (!req.body.user_id 
+          || !req.body.image_url 
+          || !req.body.start_date 
+          || !req.body.end_date 
+          || !req.body.description 
+          || !req.body.volunteer_form 
+          || !req.body.category 
+          || !req.body.org_title 
+          || !req.body.country 
+          || !req.body.region 
+          || !req.body.city) {
+          return reply.code(400).send({ message: 'Invalid input for event', entity_id: '' });
+        }
+
+        const event = await createEvent(app, req.body);
+        
+        console.log(`✅ Created event with id=${event.event_id}`);
+
+        return reply.code(201).send({
+          message: `Successfully created event`,
+          entity_id: event.event_id,
+        });
+      } catch (err: any) {
+        console.error('❌ Error in /apply:', err);
+        const status = err.message === 'Event not found' || err.message === 'User not found' ? 404 : 500;
+        return reply.code(status).send({ message: 'here', entity_id: '' });
+      }
+    }
+  );
+
+  // load all events
   app.get<{ Querystring: LoadEntityRequest }>(
     '/load',
     async (req, reply) => {
@@ -25,34 +77,6 @@ const events: FastifyPluginAsync = async (app) => {
         console.error('❌ Error in /load:', err);
         const status = err.message.includes('not found') ? 404 : 500;
         return reply.code(status).send({ message: err.message });
-      }
-    }
-  );
-
-  // create an event
-  app.post<{ Body: CreateEventRequest; Reply: EntityUpdateStatusResponse }>(
-    '/create',
-    async (req, reply) => {
-      try {
-        const { user_id, image_url, start_date, end_date, description, volunteer_form, category, org_title, country, region, city } = req.body;
-        console.log('🧪 Incoming event payload:', req.body);
-        
-        if (!user_id || !image_url || !start_date || !end_date || !description || !volunteer_form || !category || !org_title || !country || !region || !city) {
-          return reply.code(400).send({ message: 'Invalid input for event', entity_id: '' });
-        }
-
-        const event = await createEvent(app, user_id, image_url, start_date, end_date, description, volunteer_form, category, org_title, country, region, city );
-        
-        console.log(`✅ Created event with id=${event.event_id}`);
-
-        return reply.code(201).send({
-          message: `Successfully created event`,
-          entity_id: event.event_id,
-        });
-      } catch (err: any) {
-        console.error('❌ Error in /apply:', err);
-        const status = err.message === 'Event not found' || err.message === 'User not found' ? 404 : 500;
-        return reply.code(status).send({ message: 'here', entity_id: '' });
       }
     }
   );
