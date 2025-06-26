@@ -40,7 +40,7 @@ const Landing = () => {
   return (
     <div className="px-8 py-16 max-w-screen-xl mx-auto flex flex-col gap-12">
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-        {events.map((event: Event) => (
+        {Array.isArray(events) && events.map((event: Event) => (
           <EventCard event={event} key={event.event_id} />
         ))}
         <CreateEventCard />

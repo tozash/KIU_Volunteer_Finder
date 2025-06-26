@@ -22,7 +22,7 @@ const renderMarkdown = (md: string) => {
 
 const EventDetail = () => {
   const { id } = useParams()
-  const eventId = id!
+  const eventId = Number(id!)
   const [open, setOpen] = useState(false)
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['event', eventId],
