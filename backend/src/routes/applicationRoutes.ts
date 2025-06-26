@@ -1,4 +1,5 @@
 import { FastifyPluginAsync } from 'fastify';
+import { Application } from '../types/models/application';
 import { CreateApplicationRequest } from '../types/requests/createApplicationRequest';
 import { EntityUpdateStatusResponse } from '../types/responses/entityUpdateStatusResponse';
 import {
@@ -7,9 +8,34 @@ import {
   linkApplicationToUser,
   updateApplicationStatus
 } from '../services/applicationService';
+import {
+  getEntityById
+} from '../services/entityService';
 import { UpdateApplicationStatusRequest } from '../types/requests/updateApplicationStatusRequest';
+import {LoadEntityRequest} from '../types/requests/loadEntityRequest';
 
 const applications: FastifyPluginAsync = async (app) => {
+  // load application
+    app.get<{ Querystring: LoadEntityRequest }>(
+    '/load',
+    async (req, reply) => {
+      try {
+        const { entity_id } = req.query;
+
+        if (!entity_id) {
+          return reply.code(400).send({ message: 'Missing application ID', entity_id: '' });
+        }
+
+        const application = await getEntityById<Application>(app, 'applications', entity_id);
+
+        return reply.code(200).send(application);
+      } catch (err: any) {
+        console.error('❌ Error in /load:', err);
+        const status = err.message.includes('not found') ? 404 : 500;
+        return reply.code(status).send({ message: err.message });
+      }
+    }
+  );
   // create and apply for application
   app.post<{ Body: CreateApplicationRequest; Reply: EntityUpdateStatusResponse }>(
     '/create',
