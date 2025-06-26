@@ -5,7 +5,7 @@ import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/lib/useAuth'
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string(),
   password: z.string().min(6),
 })
 
@@ -53,7 +53,9 @@ const AuthModal = ({ open, onClose }: Props) => {
     if (mode === 'login') {
       try {
         const data = await handleLogin(values.email, values.password);
-        localStorage.setItem('token', data.token);
+        const user = data.json();
+        console.log(data);
+        localStorage.setItem('user', JSON.stringify(user));
         onClose();
       } catch (err) {
         // handle error (e.g., show error message)
@@ -117,6 +119,7 @@ const AuthModal = ({ open, onClose }: Props) => {
           <button
             type="submit"
             className="btn-primary w-full"
+            onClick={() => handleSubmit(onSubmit)()}
           >
             {mode === 'login' ? 'Login' : 'Register'}
           </button>
