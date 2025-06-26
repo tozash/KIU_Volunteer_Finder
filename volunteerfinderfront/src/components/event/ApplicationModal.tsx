@@ -43,14 +43,11 @@ const ApplicationModal = ({ open, onClose, eventId, questions }: Props) => {
             <textarea
               key={i}
               {...register(`answers.${i}` as const)}
-              className="border p-1 w-full rounded"
+              className="input-primary w-full"
               placeholder={q}
             />
           ))}
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-1 rounded"
-          >
+          <button type="submit" className="btn-primary w-full">
             Submit
           </button>
         </form>

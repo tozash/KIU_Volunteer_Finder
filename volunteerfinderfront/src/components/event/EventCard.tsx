@@ -14,9 +14,9 @@ type Props = {
 }
 
 const statusClasses = {
-  open: 'bg-primary',
-  closed: 'bg-gray-400',
-  full: 'bg-accent',
+  open: 'badge-Open',
+  closed: 'badge-Closed',
+  full: 'badge-Full',
 } as const
 
 const EventCard = ({ event }: Props) => (
@@ -30,9 +30,7 @@ const EventCard = ({ event }: Props) => (
         alt={event.title}
         className="w-full h-40 object-cover rounded-t-2xl transition-transform duration-200 hover:scale-105"
       />
-      <span
-        className={`absolute top-2 left-2 text-xs text-white px-2 py-1 rounded ${statusClasses[event.status]}`}
-      >
+      <span className={`absolute top-2 left-2 ${statusClasses[event.status]}`}>
         {event.status === 'open'
           ? 'Open'
           : event.status === 'closed'
@@ -41,7 +39,7 @@ const EventCard = ({ event }: Props) => (
       </span>
     </div>
     <div className="p-4">
-      <h4 className="font-semibold text-lg line-clamp-2">{event.title}</h4>
+      <h4 className="font-semibold text-xl line-clamp-2">{event.title}</h4>
       <div className="mt-1 text-sm">
         <span className="font-medium">{event.date}</span>
         <span className="block font-normal">{event.location}</span>

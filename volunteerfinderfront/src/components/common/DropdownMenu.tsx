@@ -24,11 +24,7 @@ const DropdownMenu = ({ open, onClose, trigger, children }: Props) => {
     <div className="relative inline-block text-left">
       {cloneElement(trigger, { 'aria-expanded': open })}
       {open && (
-        <div
-          ref={menuRef}
-          className="absolute right-0 mt-2 w-40 rounded-md shadow border bg-white z-10"
-          role="menu"
-        >
+        <div ref={menuRef} className="dropdown-menu" role="menu">
           {children}
         </div>
       )}

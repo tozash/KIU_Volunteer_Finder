@@ -60,25 +60,25 @@ const AuthModal = ({ open, onClose }: Props) => {
             <>
               <input
                 {...registerField('name')}
-                className="border p-1 w-full rounded"
+                className="input-primary w-full"
                 placeholder="Name"
                 aria-invalid={mode === 'register' && 'name' in errors}
               />
               <input
                 {...registerField('surname')}
-                className="border p-1 w-full rounded"
+                className="input-primary w-full"
                 placeholder="Surname"
                 aria-invalid={mode === 'register' && 'surname' in errors}
               />
               <input
                 {...registerField('dob')}
-                className="border p-1 w-full rounded"
+                className="input-primary w-full"
                 placeholder="Date of birth"
                 aria-invalid={mode === 'register' && 'dob' in errors}
               />
               <input
                 {...registerField('sex')}
-                className="border p-1 w-full rounded"
+                className="input-primary w-full"
                 placeholder="Sex"
                 aria-invalid={mode === 'register' && 'sex' in errors}
               />
@@ -86,26 +86,26 @@ const AuthModal = ({ open, onClose }: Props) => {
           )}
           <input
             {...registerField('email')}
-            className="border p-1 w-full rounded"
+            className="input-primary w-full"
             placeholder="Email"
             aria-invalid={!!errors.email}
           />
           <input
             type="password"
             {...registerField('password')}
-            className="border p-1 w-full rounded"
+            className="input-primary w-full"
             placeholder="Password"
             aria-invalid={!!errors.password}
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-1 rounded"
+            className="btn-primary w-full"
           >
             {mode === 'login' ? 'Login' : 'Register'}
           </button>
         </form>
         <button
-          className="text-blue-600 mt-2 text-sm"
+          className="text-primary mt-2 text-sm hover:underline"
           onClick={() =>
             setMode((m) => (m === 'login' ? 'register' : 'login'))
           }

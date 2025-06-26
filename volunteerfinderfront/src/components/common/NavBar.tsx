@@ -10,6 +10,7 @@ import DropdownMenu from './DropdownMenu'
 const NavBar = () => {
   const [open, setOpen] = useState(false)
   const [authOpen, setAuthOpen] = useState(false)
+  const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuth()
   const [params, setParams] = useSearchParams()
   const [search, setSearch] = useState(params.get('search') ?? '')
@@ -37,7 +38,27 @@ const NavBar = () => {
         onChange={setSearch}
         className="hidden sm:block"
       />
-      <div className="ml-auto">
+      <button
+        className="sm:hidden p-2"
+        aria-label="Open menu"
+        onClick={() => setMobileOpen(true)}
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          className="w-6 h-6"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth={2}
+            d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 7.65a7.5 7.5 0 010 10.6z"
+          />
+        </svg>
+      </button>
+      <div className="ml-auto hidden sm:block">
         {user ? (
           <DropdownMenu
             open={open}
@@ -72,8 +93,41 @@ const NavBar = () => {
             Login / Register
           </button>
         )}
-        <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
       </div>
+      {mobileOpen && (
+        <div className="fixed inset-0 bg-neutralLight p-4 flex flex-col gap-4 z-20">
+          <button
+            aria-label="Close menu"
+            className="self-end text-2xl"
+            onClick={() => setMobileOpen(false)}
+          >
+            ×
+          </button>
+          <SearchInput value={search} onChange={setSearch} />
+          {user ? (
+            <button
+              onClick={() => {
+                logout()
+                setMobileOpen(false)
+              }}
+              className="btn-primary"
+            >
+              Logout
+            </button>
+          ) : (
+            <button
+              onClick={() => {
+                setAuthOpen(true)
+                setMobileOpen(false)
+              }}
+              className="btn-primary"
+            >
+              Login / Register
+            </button>
+          )}
+        </div>
+      )}
+      <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
     </nav>
   )
 }

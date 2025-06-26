@@ -8,7 +8,7 @@ const CreateEventCard = () => {
   const [authOpen, setAuthOpen] = useState(false)
 
   const content = (
-    <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-2xl hover:bg-gray-100 cursor-pointer transition-colors">
+    <div className="flex flex-col items-center justify-center py-8 border-2 border-dashed rounded-2xl hover:bg-[#F5F5F5] cursor-pointer transition-colors">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         className="h-8 w-8 text-primary"

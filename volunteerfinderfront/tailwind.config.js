@@ -9,6 +9,9 @@ module.exports = {
       fontFamily: {
         sans: ['Montserrat', 'sans-serif'],
       },
+      spacing: {
+        18: '4.5rem',
+      },
       colors: {
         primary: '#006C67',
         accent: '#FF6B6B',

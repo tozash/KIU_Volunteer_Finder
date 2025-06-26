@@ -16,13 +16,13 @@ const VolunteerCard = ({ application, onStatusChange }: Props) => (
         <>
           <button
             onClick={() => onStatusChange?.(application.id, 'accepted')}
-            className="px-2 py-1 bg-green-600 text-white rounded"
+            className="px-2 py-1 bg-support text-white rounded"
           >
             Accept
           </button>
           <button
             onClick={() => onStatusChange?.(application.id, 'denied')}
-            className="px-2 py-1 bg-red-600 text-white rounded"
+            className="px-2 py-1 bg-accent text-white rounded"
           >
             Deny
           </button>
