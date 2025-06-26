@@ -8,7 +8,6 @@ interface User {
 
 interface AuthContextValue {
   user: User | null
-  token: string | null
   login: (data: { user_identifier: string; password: string }) => Promise<void>
   register: (data: {
     name: string
@@ -25,13 +24,10 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
-    if (storedToken && storedUser) {
-      setToken(storedToken)
+    if (storedUser) {
       setUser(JSON.parse(storedUser))
     }
   }, [])
@@ -56,21 +52,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     })
     if (!res.ok) throw new Error('Registration failed')
     const result = await res.json()
-    setToken(result.token)
     setUser(result.user)
-    localStorage.setItem('token', result.token)
     localStorage.setItem('user', JSON.stringify(result.user))
   }
 
   const logout = () => {
-    setToken(null)
     setUser(null)
-    localStorage.removeItem('token')
     localStorage.removeItem('user')
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )
