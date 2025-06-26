@@ -1,11 +1,34 @@
 import { FastifyPluginAsync } from 'fastify';
 import { CreateEventRequest } from '../types/requests/createEventRequest';
 import { EntityUpdateStatusResponse } from '../types/responses/entityUpdateStatusResponse';
-import {
-  createEvent
-} from '../services/eventService';
+import { createEvent } from '../services/eventService';
+import { getEntityById} from '../services/entityService';
+import {LoadEntityRequest} from '../types/requests/loadEntityRequest';
+
 
 const events: FastifyPluginAsync = async (app) => {
+  // load event
+  app.get<{ Querystring: LoadEntityRequest }>(
+    '/load',
+    async (req, reply) => {
+      try {
+        const { entity_id } = req.query;
+
+        if (!entity_id) {
+          return reply.code(400).send({ message: 'Missing event ID', entity_id: '' });
+        }
+
+        const application = await getEntityById<Event>(app, 'events', entity_id);
+
+        return reply.code(200).send(application);
+      } catch (err: any) {
+        console.error('❌ Error in /load:', err);
+        const status = err.message.includes('not found') ? 404 : 500;
+        return reply.code(status).send({ message: err.message });
+      }
+    }
+  );
+
   // create an event
   app.post<{ Body: CreateEventRequest; Reply: EntityUpdateStatusResponse }>(
     '/create',
