@@ -1,10 +1,11 @@
 import { useForm } from 'react-hook-form'
 import { useToast } from '@/components/common/Toast'
+import { api } from '@/lib/api'
 
 interface Props {
   open: boolean
   onClose: () => void
-  eventId: number
+  eventId: string
   questions: string[]
 }
 
@@ -19,13 +20,22 @@ const ApplicationModal = ({ open, onClose, eventId, questions }: Props) => {
   const addToast = useToast()
 
   const onSubmit = async (values: FormValues) => {
-    await fetch(`/events/${eventId}/applications`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(values),
-    })
-    addToast('Application submitted')
-    onClose()
+    try {
+      // For now, using a dummy user_id - in a real app this would come from auth context
+      const dummyUserId = 'dummy-user-id'
+      
+      await api.createApplication({
+        user_id: dummyUserId,
+        event_id: eventId,
+        answers: values.answers
+      })
+      
+      addToast('Application submitted')
+      onClose()
+    } catch (error) {
+      console.error('Error submitting application:', error)
+      addToast('Failed to submit application. Please try again.')
+    }
   }
 
   if (!open) return null
