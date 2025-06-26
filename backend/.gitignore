@@ -2,3 +2,4 @@ secrets
 node_modules
 .env
 volunteer_opportunities.csv
+dist
