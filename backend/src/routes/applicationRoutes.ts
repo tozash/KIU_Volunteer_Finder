@@ -36,6 +36,7 @@ const applications: FastifyPluginAsync = async (app) => {
       }
     }
   );
+  
   // create and apply for application
   app.post<{ Body: CreateApplicationRequest; Reply: EntityUpdateStatusResponse }>(
     '/create',

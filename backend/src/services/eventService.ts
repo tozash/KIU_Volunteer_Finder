@@ -1,5 +1,4 @@
 import { FastifyInstance } from 'fastify';
-import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { Event } from '../types/models/event';
 import { updateCreatorEventsList } from './userService';
@@ -37,5 +36,6 @@ export async function createEvent(
 
   await app.db.collection('events').doc(event.event_id).set(event);
   await updateCreatorEventsList(app, event.creator_user_id, event.event_id);
+
   return event;
 }
