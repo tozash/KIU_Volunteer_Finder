@@ -47,9 +47,9 @@ export const handlers = [
     return res(ctx.status(200), ctx.json(applications))
   }),
   rest.post('/auth/register', (req, res, ctx) =>
-    res(ctx.status(200), ctx.json({ token: 'dummy', user: { id: 1, name: 'Alice' } })),
+    res(ctx.status(200), ctx.json({ user: { id: 1, name: 'Alice' } })),
   ),
   rest.post('/auth/login', (req, res, ctx) =>
-    res(ctx.status(200), ctx.json({ token: 'dummy', user: { id: 1, name: 'Alice' } })),
+    res(ctx.status(200), ctx.json({ user: { id: 1, name: 'Alice' } })),
   ),
 ]
