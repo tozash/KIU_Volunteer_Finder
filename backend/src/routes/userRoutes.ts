@@ -1,6 +1,6 @@
 import { FastifyPluginAsync } from 'fastify'
 
-const userRoutes: FastifyPluginAsync = async (app) => {
+const users: FastifyPluginAsync = async (app) => {
   app.get('/random', async (_req, reply) => {
     const snapshot = await app.db.collection('users').get()
     const users = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }))
@@ -25,4 +25,4 @@ const userRoutes: FastifyPluginAsync = async (app) => {
   })
 }
 
-export default userRoutes
+export default users

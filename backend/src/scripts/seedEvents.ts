@@ -1,6 +1,6 @@
 import { faker } from '@faker-js/faker';
 import { db } from '../plugins/firebase';
-import { Event } from '../models/event';
+import { Event } from '../types/models/event';
 
 async function getRandomUserIds(): Promise<string[]> {
   const snapshot = await db.collection('users').get();

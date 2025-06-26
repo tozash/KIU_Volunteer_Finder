@@ -1,6 +1,6 @@
 import Fastify from 'fastify'
-import applicationRoutes from './routes/applications'
-import userRoutes from './routes/users'
+import applicationRoutes from './routes/applicationRoutes'
+import userRoutes from './routes/userRoutes'
 import { db } from './plugins/firebase'
 
 const app = Fastify()
