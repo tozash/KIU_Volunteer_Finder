@@ -6,8 +6,13 @@ export interface Event {
   image_url: string;
   start_date: string; 
   end_date: string;
-  // location: Location;
   description: string;
   volunteer_form: string[];
-  applications: Application[];
+  applications: string[];
+  hits: number;
+  category: string;
+  org_title: string;
+  country: string;
+  region: string;
+  city: string;
 }

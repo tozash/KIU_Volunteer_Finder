@@ -9,5 +9,6 @@ export interface User {
   email: string;
   username: string;
   password: string;
-  applications: Application[];
+  applications: string[];
+  events: string[];
 }
