@@ -6,7 +6,7 @@ import ApplicationModal from '@/components/event/ApplicationModal'
 import type { Event } from '@/lib/dummyData'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
-  const res = await fetch(`/events/${id}`)
+  const res = await fetch(`/api/events/${id}`)
   return res.json()
 }
 

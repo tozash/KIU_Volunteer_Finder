@@ -10,7 +10,7 @@ import { useQuery } from '@tanstack/react-query'
 
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
-  const res = await fetch(`/events?search=${encodeURIComponent(search)}`)
+  const res = await fetch(`/api/events?search=${encodeURIComponent(search)}`)
   return res.json()
 }
 
