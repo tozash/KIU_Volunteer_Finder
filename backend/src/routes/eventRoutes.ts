@@ -1,9 +1,9 @@
 import { FastifyPluginAsync } from 'fastify';
 import { CreateEventRequest } from '../types/requests/createEventRequest';
 import { EntityUpdateStatusResponse } from '../types/responses/entityUpdateStatusResponse';
+import { LoadEntityRequest}  from '../types/requests/loadEntityRequest';
 import { createEvent } from '../services/eventService';
 import { getEntityById} from '../services/entityService';
-import {LoadEntityRequest} from '../types/requests/loadEntityRequest';
 
 
 const events: FastifyPluginAsync = async (app) => {

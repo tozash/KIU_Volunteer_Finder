@@ -37,7 +37,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   const login: AuthContextValue['login'] = async (data) => {
-    const res = await fetch('/api/auth/login', {
+    const res = await fetch('/api/users/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   const register: AuthContextValue['register'] = async (data) => {
-    const res = await fetch('/api/auth/register', {
+    const res = await fetch('/api/users/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),

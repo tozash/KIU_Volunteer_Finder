@@ -7,20 +7,8 @@ import { useQuery } from '@tanstack/react-query'
 import { api, type Event } from '@/lib/api'
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
-  try {
-    const events = await api.getEvents()
-    if (search) {
-      return events.filter(event => 
-        event.org_title.toLowerCase().includes(search.toLowerCase()) ||
-        event.description.toLowerCase().includes(search.toLowerCase()) ||
-        event.city.toLowerCase().includes(search.toLowerCase())
-      )
-    }
-    return events
-  } catch (error) {
-    console.error('Error fetching events:', error)
-    return []
-  }
+  const res = await fetch(`/api/events?search=${encodeURIComponent(search)}`)
+  return res.json()
 }
 
 const Landing = () => {

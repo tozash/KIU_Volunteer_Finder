@@ -5,8 +5,9 @@ import { Link, useParams } from 'react-router-dom'
 import ApplicationModal from '@/components/event/ApplicationModal'
 import { api, type Event } from '@/lib/api'
 
-const fetchEvent = async (id: string): Promise<Event> => {
-  return api.getEvent(id)
+const fetchEvent = async (id: number): Promise<Event | undefined> => {
+  const res = await fetch(`/api/events/${id}`)
+  return res.json()
 }
 
 const renderMarkdown = (md: string) => {

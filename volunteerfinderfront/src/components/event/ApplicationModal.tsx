@@ -20,22 +20,13 @@ const ApplicationModal = ({ open, onClose, eventId, questions }: Props) => {
   const addToast = useToast()
 
   const onSubmit = async (values: FormValues) => {
-    try {
-      // For now, using a dummy user_id - in a real app this would come from auth context
-      const dummyUserId = 'dummy-user-id'
-      
-      await api.createApplication({
-        user_id: dummyUserId,
-        event_id: eventId,
-        answers: values.answers
-      })
-      
-      addToast('Application submitted')
-      onClose()
-    } catch (error) {
-      console.error('Error submitting application:', error)
-      addToast('Failed to submit application. Please try again.')
-    }
+    await fetch(`/api/events/${eventId}/applications`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(values),
+    })
+    addToast('Application submitted')
+    onClose()
   }
 
   if (!open) return null
