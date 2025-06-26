@@ -1,25 +1,27 @@
-import express from 'express';
-import { initializeApp, cert } from 'firebase-admin/app';
-import { getFirestore } from 'firebase-admin/firestore';
-import * as dotenv from 'dotenv';
+import Fastify from 'fastify'
+import applicationRoutes from './routes/applicationRoutes'
+import userRoutes from './routes/userRoutes'
+import eventRoutes from './routes/eventRoutes'
+import { db } from './plugins/firebase'
 
-dotenv.config();
+const app = Fastify()
 
-initializeApp({
-  credential: cert(process.env.SERVICE_ACCOUNT_PATH as string),
-});
+// Decorate Fastify with Firestore instance
+app.decorate('db', db)
 
-const db = getFirestore();
-const app = express();
-app.use(express.json());
+// Register routes
+app.register(userRoutes, { prefix: '/api/users' })
+app.register(applicationRoutes, { prefix: '/api/applications' })
+app.register(eventRoutes, { prefix: '/api/events' })
 
-// sample route
-app.get('/api/ping', (_, res) => res.json({ status: 'ok' }));
+const start = async () => {
+  try {
+    await app.listen({ port: 3000 })
+    console.log('✅ Fastify API running at http://localhost:3000')
+  } catch (err) {
+    console.error(err)
+    process.exit(1)
+  }
+}
 
-// Firestore example
-app.post('/api/volunteers', async (req, res) => {
-  const docRef = await db.collection('volunteers').add(req.body);
-  res.status(201).json({ id: docRef.id });
-});
-
-app.listen(3000, () => console.log('API running on http://localhost:3000'));
+start()
