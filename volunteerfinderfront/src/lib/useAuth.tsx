@@ -9,7 +9,7 @@ interface User {
 interface AuthContextValue {
   user: User | null
   token: string | null
-  login: (data: { email: string; password: string }) => Promise<void>
+  login: (data: { user_identifier: string; password: string }) => Promise<void>
   register: (data: {
     name: string
     surname: string
@@ -37,17 +37,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }, [])
 
   const login: AuthContextValue['login'] = async (data) => {
-    const res = await fetch('/api/users/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
+    const params = new URLSearchParams({ user_identifier: data.user_identifier, password: data.password });
+    const res = await fetch(`/api/users/login?${params.toString()}`, {
+      method: 'GET',
+    });
+
     if (!res.ok) throw new Error('Login failed')
-    const result = await res.json()
-    setToken(result.token)
-    setUser(result.user)
-    localStorage.setItem('token', result.token)
-    localStorage.setItem('user', JSON.stringify(result.user))
+    const user = await res.json()
+    setUser(user)
+    localStorage.setItem('user', JSON.stringify(user))
   }
 
   const register: AuthContextValue['register'] = async (data) => {

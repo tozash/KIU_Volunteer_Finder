@@ -52,11 +52,8 @@ const AuthModal = ({ open, onClose }: Props) => {
   const onSubmit = async (values: LoginForm | RegisterForm) => {
     if (mode === 'login') {
       try {
-        const data = await handleLogin(values.email, values.password);
-        const user = data.json();
-        console.log(data);
-        localStorage.setItem('user', JSON.stringify(user));
-        onClose();
+        await login({ user_identifier: values.email, password: values.password })
+        onClose()
       } catch (err) {
         // handle error (e.g., show error message)
       }
