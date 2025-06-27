@@ -14,17 +14,16 @@ export async function loadEvents(
 
   // ── exact-match filters ─────────────────────────────────────────────
   if (filters.creator_id) q = q.where('creator_user_id', '==', filters.creator_id);
+  /*
   if (filters.org_title)  q = q.where('org_title',       '==', filters.org_title);
   if (filters.category)   q = q.where('category',        '==', filters.category);
   if (filters.country)    q = q.where('country',         '==', filters.country);
 
   // ── range filters ──────────────────────────────────────────────────
-  if (filters.date_min)   q = q.where('start_date', '>=', filters.date_min);
-  if (filters.date_max)   q = q.where('start_date', '<=', filters.date_max);
   if (filters.hits_min)
                           q = q.where('hits', '>=', Number(filters.hits_min));
   if (filters.hits_max)
-                          q = q.where('hits', '<=', Number(filters.hits_max));
+                          q = q.where('hits', '<=', Number(filters.hits_max));*/
                         
   // ── sort by hits descending ───────────────────────────────────────
   q = q.orderBy('hits', 'desc');
