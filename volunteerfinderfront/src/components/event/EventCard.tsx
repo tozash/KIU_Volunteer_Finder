@@ -42,24 +42,26 @@ const EventCard = ({ event }: Props) => {
 
   const status = getStatus(event.start_date, event.end_date)
   const statusClasses = {
-    open: 'badge-Open',
-    closed: 'badge-Closed',
-    full: 'badge-Full',
+    open: 'bg-primary text-white',
+    closed: 'bg-gray-400 text-white',
+    full: 'bg-accent text-white',
   } as const
 
   return (
     <Link
       to={`/events/${event.event_id}`}
-      className="block rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
+      className="group block rounded-2xl overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-200"
     >
-      <div className="relative overflow-hidden">
+      <div className="relative aspect-[4/3] bg-gray-50 overflow-hidden">
         <img
           src={event.image_url}
           alt={event.org_title}
-          className="w-full h-40 object-cover rounded-t-2xl transition-transform duration-200 hover:scale-105"
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-200 group-hover:scale-105"
         />
-        <span className={`absolute top-2 left-2 ${statusClasses[status]}`}>
-          {status === 'open' ? 'Open' : status === 'closed' ? 'Closed' : 'Full'}
+        <span
+          className={`absolute top-2 left-2 ${statusClasses[status]} text-[10px] font-semibold px-2 py-0.5 rounded-full tracking-wide`}
+        >
+          {status === 'open' ? 'OPEN' : status === 'closed' ? 'CLOSED' : 'FULL'}
         </span>
       </div>
       <div className="p-4">
