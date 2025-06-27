@@ -5,4 +5,6 @@ export interface LoadEventsRequest {
   hits_min?: number;    
   hits_max?: number;
   country?: string;
+  page?: number;
+  limit?: number;
 }
