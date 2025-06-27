@@ -13,20 +13,20 @@ const NavBar = () => {
   const [mobileOpen, setMobileOpen] = useState(false)
   const { user, logout } = useAuth()
   const [params, setParams] = useSearchParams()
-  const [search, setSearch] = useState(params.get('search') ?? '')
+  const [search, setSearch] = useState(params.get('q') ?? '')
   const debounced = useDebounce(search, 300)
 
   // update url param when debounced search changes
   useEffect(() => {
     const p = new URLSearchParams(params)
-    if (debounced) p.set('search', debounced)
-    else p.delete('search')
+    if (debounced) p.set('q', debounced)
+    else p.delete('q')
     setParams(p, { replace: true })
   }, [debounced])
 
   return (
     <nav
-      className="flex items-center justify-between h-18 px-8 border-b border-grayBorder bg-neutralLight"
+      className="flex items-center justify-between h-18 px-8 border-b border-gray-100 shadow-sm bg-neutralLight"
       role="navigation"
       aria-label="main navigation"
     >
@@ -40,7 +40,7 @@ const NavBar = () => {
       <SearchInput
         value={search}
         onChange={setSearch}
-        className="hidden sm:block"
+        className="block lg:hidden w-full max-w-lg mx-auto md:mx-0"
       />
       <button
         className="sm:hidden p-2"
@@ -106,7 +106,7 @@ const NavBar = () => {
           </DropdownMenu>
         ) : (
           <button
-            className="px-4 py-2 bg-primary text-neutralLight rounded-lg font-semibold uppercase text-sm"
+            className="border border-primary text-primary hover:bg-primary hover:text-white rounded-lg py-2 px-5 text-sm font-semibold"
             onClick={() => setAuthOpen(true)}
             aria-label="Login / Register"
           >
@@ -123,7 +123,7 @@ const NavBar = () => {
           >
             ×
           </button>
-          <SearchInput value={search} onChange={setSearch} />
+          <SearchInput value={search} onChange={setSearch} className="w-full" />
           {user ? (
             <button
               onClick={() => {

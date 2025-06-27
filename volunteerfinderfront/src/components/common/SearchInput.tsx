@@ -17,7 +17,7 @@ const SearchInput = ({ value, onChange, onSubmit, className = '' }: Props) => (
       }}
       placeholder="Search volunteer events…"
       aria-label="Search volunteer events"
-      className="input-primary w-96 h-10 pr-10"
+      className="input-primary w-full max-w-lg h-10 pr-10"
     />
     <svg
       className="absolute right-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500 pointer-events-none"
