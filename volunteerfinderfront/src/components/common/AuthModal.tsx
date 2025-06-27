@@ -35,15 +35,44 @@ const AuthModal = ({ open, onClose }: Props) => {
     register: registerField,
     handleSubmit,
     formState: { errors },
+    setValue,
   } = useForm<LoginForm | RegisterForm>({
     resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema),
   })
 
+  const [dob, setDob] = useState({ day: '', month: '', year: '' })
+  const days = Array.from({ length: 31 }, (_, i) => String(i + 1))
+  const months = [
+    'Jan',
+    'Feb',
+    'Mar',
+    'Apr',
+    'May',
+    'Jun',
+    'Jul',
+    'Aug',
+    'Sep',
+    'Oct',
+    'Nov',
+    'Dec',
+  ]
+  const years = Array.from({ length: 101 }, (_, i) => String(1925 + i))
+
+  const updateDob = (part: Partial<typeof dob>) => {
+    const newDob = { ...dob, ...part }
+    setDob(newDob)
+    if (newDob.day && newDob.month && newDob.year) {
+      setValue('dob', `${newDob.day}-${newDob.month}-${newDob.year}`)
+    }
+  }
 
   const onSubmit = async (values: LoginForm | RegisterForm) => {
     if (mode === 'login') {
       try {
-        await login({ user_identifier: values.email, password: values.password })
+        await login({
+          user_identifier: values.email,
+          password: values.password,
+        })
         onClose()
       } catch (err) {
         console.log(err)
@@ -58,7 +87,7 @@ const AuthModal = ({ open, onClose }: Props) => {
           sex: registerData.sex as 'Male' | 'Female',
           email: registerData.email,
           username: registerData.email, // Using email as username
-          password: registerData.password
+          password: registerData.password,
         }
         await api.registerUser(signupRequest)
         onClose()
@@ -72,37 +101,104 @@ const AuthModal = ({ open, onClose }: Props) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
-      <div className="bg-white p-4 rounded w-80" role="dialog" aria-modal="true">
-        <h2 className="text-lg font-semibold mb-2">
-          {mode === 'login' ? 'Login' : 'Register'}
+      <div
+        className="relative bg-neutralLight p-6 rounded-xl w-[420px] flex flex-col gap-6"
+        role="dialog"
+        aria-modal="true"
+      >
+        <h2 className="text-2xl font-bold text-center text-neutralDark">
+          {mode === 'login' ? 'Login' : 'Create Account'}
         </h2>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
           {mode === 'register' && (
             <>
-              <input
-                {...registerField('name')}
-                className="input-primary w-full"
-                placeholder="Name"
-                aria-invalid={mode === 'register' && 'name' in errors}
-              />
-              <input
-                {...registerField('surname')}
-                className="input-primary w-full"
-                placeholder="Surname"
-                aria-invalid={mode === 'register' && 'surname' in errors}
-              />
-              <input
-                {...registerField('dob')}
-                className="input-primary w-full"
-                placeholder="Date of birth"
-                aria-invalid={mode === 'register' && 'dob' in errors}
-              />
-              <input
-                {...registerField('sex')}
-                className="input-primary w-full"
-                placeholder="Sex"
-                aria-invalid={mode === 'register' && 'sex' in errors}
-              />
+              <div className="grid md:grid-cols-2 gap-4">
+                <input
+                  {...registerField('name')}
+                  className="input-primary w-full"
+                  placeholder="First name"
+                  aria-invalid={mode === 'register' && 'name' in errors}
+                />
+                <input
+                  {...registerField('surname')}
+                  className="input-primary w-full"
+                  placeholder="Surname"
+                  aria-invalid={mode === 'register' && 'surname' in errors}
+                />
+              </div>
+              <div className="grid md:grid-cols-3 gap-4">
+                <select
+                  className="input-primary w-full"
+                  value={dob.day}
+                  onChange={(e) => updateDob({ day: e.target.value })}
+                >
+                  <option value="" disabled>
+                    Day
+                  </option>
+                  {days.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="input-primary w-full"
+                  value={dob.month}
+                  onChange={(e) => updateDob({ month: e.target.value })}
+                >
+                  <option value="" disabled>
+                    Month
+                  </option>
+                  {months.map((m) => (
+                    <option key={m} value={m}>
+                      {m}
+                    </option>
+                  ))}
+                </select>
+                <select
+                  className="input-primary w-full"
+                  value={dob.year}
+                  onChange={(e) => updateDob({ year: e.target.value })}
+                >
+                  <option value="" disabled>
+                    Year
+                  </option>
+                  {years.map((y) => (
+                    <option key={y} value={y}>
+                      {y}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="flex gap-6">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Female"
+                    className="accent-primary"
+                    {...registerField('sex')}
+                  />
+                  Female
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Male"
+                    className="accent-primary"
+                    {...registerField('sex')}
+                  />
+                  Male
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="Other"
+                    className="accent-primary"
+                    {...registerField('sex')}
+                  />
+                  Other
+                </label>
+              </div>
             </>
           )}
           <input
@@ -118,21 +214,24 @@ const AuthModal = ({ open, onClose }: Props) => {
             placeholder="Password"
             aria-invalid={!!errors.password}
           />
+          {mode === 'register' && (
+            <input type="hidden" {...registerField('dob')} />
+          )}
           <button
             type="submit"
-            className="btn-primary w-full"
+            className="btn-primary w-full rounded-xl"
             onClick={() => handleSubmit(onSubmit)()}
           >
             {mode === 'login' ? 'Login' : 'Register'}
           </button>
         </form>
         <button
-          className="text-primary mt-2 text-sm hover:underline"
-          onClick={() =>
-            setMode((m) => (m === 'login' ? 'register' : 'login'))
-          }
+          className="text-primary text-sm hover:underline text-center"
+          onClick={() => setMode((m) => (m === 'login' ? 'register' : 'login'))}
         >
-          {mode === 'login' ? 'Need an account? Register' : 'Have an account? Login'}
+          {mode === 'login'
+            ? 'Need an account? Register'
+            : 'Have an account? Login'}
         </button>
         <button
           aria-label="Close"
@@ -147,4 +246,3 @@ const AuthModal = ({ open, onClose }: Props) => {
 }
 
 export default AuthModal
-
