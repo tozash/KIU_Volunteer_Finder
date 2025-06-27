@@ -27,7 +27,7 @@ export const mockUser = {
   sex: 'Male',
   email: 'john@example.com',
   username: 'johndoe',
-  password: '$2b$10$ErStxWBRZQNYFToeGPHa3ucLEHzKMI2zuoSc1o3R8a1rZWOY6FLHG',
+  password: 'pass123',
   applications: [],
   events: [],
 };
