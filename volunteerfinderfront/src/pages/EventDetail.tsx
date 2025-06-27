@@ -5,11 +5,6 @@ import { Link, useParams } from 'react-router-dom'
 import ApplicationModal from '@/components/event/ApplicationModal'
 import { api, type Event } from '@/lib/api'
 
-const fetchEvent = async (id: number): Promise<Event | undefined> => {
-  const res = await fetch(`/api/events/${id}`)
-  return res.json()
-}
-
 const renderMarkdown = (md: string) => {
   const escaped = md.replace(/</g, '&lt;').replace(/>/g, '&gt;')
   const withBold = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
@@ -24,9 +19,11 @@ const EventDetail = () => {
   const { id } = useParams()
   const eventId = String(id!)
   const [open, setOpen] = useState(false)
+  
+  // Fixed: Use the proper API call instead of hardcoded fetch
   const { data: event, isLoading, error } = useQuery({
     queryKey: ['event', eventId],
-    queryFn: () => fetchEvent(Number(eventId)),
+    queryFn: () => api.getEvent(eventId),
   })
 
   if (isLoading) {
@@ -95,6 +92,12 @@ const EventDetail = () => {
           className="inline-block mt-4 text-blue-600"
         >
           Edit Event
+        </Link>
+        <Link
+          to={`/events/${event.event_id}/volunteers`}
+          className="inline-block mt-4 ml-4 text-green-600"
+        >
+          View Volunteers
         </Link>
       </div>
     </div>

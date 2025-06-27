@@ -24,6 +24,7 @@ export interface Event {
   end_date: string
   description: string
   volunteer_form: string[]
+  applications: string[] // Added this based on your event response
   category: string
   org_title: string
   country: string
@@ -61,7 +62,7 @@ export const api = {
   // Events
   async getEvents(userId?: string): Promise<Event[]> {
     const response = await fetch(`${API_BASE_URL}/events/loadMany?creator_id=${userId}`)
-    if (!response.ok) throw new Error('Failed to fetch event')
+    if (!response.ok) throw new Error('Failed to fetch events')
     return response.json()
   },
 
@@ -92,15 +93,9 @@ export const api = {
   },
 
   // Applications
-  async getApplications(id: string): Promise<Application[]> {
-    const response = await fetch(`${API_BASE_URL}/applications/load?event_id=${id}`)
-    if (!response.ok) throw new Error('Failed to fetch applications')
-    return response.json()
-  },
-
-  async getApplication(id: string): Promise<Application> {
-    const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${id}`)
-    if (!response.ok) throw new Error('Failed to fetch application')
+  async loadApplication(entityId: string): Promise<Application> {
+    const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
+    if (!response.ok) throw new Error(`Failed to load application ${entityId}`)
     return response.json()
   },
 
@@ -118,7 +113,7 @@ export const api = {
     return response.json()
   },
 
-  async updateApplicationStatus(applicationId: string, status: Application['status']): Promise<{ entity_id: string }> {
+  async updateApplicationStatus(applicationId: string, status: Application['status']): Promise<EntityUpdateStatusResponse> {
     const response = await fetch(`${API_BASE_URL}/applications/update`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -133,7 +128,7 @@ export const api = {
 
   async getMySubmissions(userId: string): Promise<Application[]> {
     const user = await this.getUser(userId);
-    return Promise.all(user.applications.map(appId => this.getApplication(appId)));
+    return Promise.all(user.applications.map(appId => this.loadApplication(appId)));
   },
 
   // Users
@@ -149,26 +144,6 @@ export const api = {
     return response.json()
   },
 
-  async getVolunteersByEvent(entityId: string): Promise<Application[]> {
-  console.log(entityId)
-  const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
-  if (!response.ok) throw new Error('Failed to fetch volunteers')
-  return response.json()
-},
-
-  async updateVolunteerStatus(applicationId: string, status: Application['status']): Promise<any> {
-    const response = await fetch(`${API_BASE_URL}/applications/update`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        application_id: applicationId,
-        updated_application_status: status
-      })
-    })
-    if (!response.ok) throw new Error('Failed to update volunteer status')
-    return response.json()
-  },
-
   async registerUser(req: SignupRequest): Promise<EntityUpdateStatusResponse> {
     const response = await fetch(`${API_BASE_URL}/users/signup`, {
       method: 'POST',
@@ -177,11 +152,5 @@ export const api = {
     })
     if (!response.ok) throw new Error('Failed to register user')
     return response.json()
-  },
-
-  async loadApplication(entityId: string): Promise<Application> {
-  const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
-  if (!response.ok) throw new Error(`Failed to load application ${entityId}`)
-  return response.json()
+  }
 }
-} 
