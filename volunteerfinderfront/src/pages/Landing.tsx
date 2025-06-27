@@ -74,7 +74,9 @@ const Landing = () => {
           </select>
         </div>
       </section>
+      <CreateEventCard />
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+      
         {Array.isArray(events) && events.length > 0 ? (
           events.map((event: Event) => (
             <EventCard event={event} key={event.event_id} />
@@ -91,7 +93,7 @@ const Landing = () => {
             </p>
           </div>
         )}
-        <CreateEventCard />
+        
       </div>
     </div>
   )

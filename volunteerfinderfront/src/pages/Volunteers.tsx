@@ -6,9 +6,21 @@ import VolunteerCard from '@/components/event/VolunteerCard'
 import { api, type Application, type Event } from '@/lib/api'
 import { useToast } from '@/components/common/Toast'
 
-const fetchApplications = async (eventId: string): Promise<Application[]> => {
+const fetchApplications = async (applicationIds: string[]): Promise<Application[]> => {
   try {
-    return await api.getVolunteersByEvent(eventId)
+    const applications: Application[] = []
+    
+    for (const appId of applicationIds) {
+      try {
+        const application = await api.loadApplication(appId)
+        applications.push(application)
+      } catch (error) {
+        console.error(`Error loading application ${appId}:`, error)
+        // Continue with other applications even if one fails
+      }
+    }
+    
+    return applications
   } catch (error) {
     console.error('Error fetching applications:', error)
     return []
@@ -17,28 +29,44 @@ const fetchApplications = async (eventId: string): Promise<Application[]> => {
 
 const Volunteers = () => {
   const { id } = useParams()
-  const eventId = id!
+  const entityId = id!
   const [statusFilter, setStatusFilter] = useState('all')
   const [sort, setSort] = useState<'name' | 'status'>('name')
   const addToast = useToast()
   const [questions, setQuestions] = useState<string[]>([])
 
+  const [applicationIds, setApplicationIds] = useState<string[]>([])
+
   useEffect(() => {
     const fetchEvent = async () => {
-      if (!eventId) return;
+      if (!entityId) return;
       try {
-        const event: Event = await api.getEvent(eventId)
+        console.log('🔍 Fetching event with entityId:', entityId)
+        const event: Event = await api.getEvent(entityId)
+        console.log('📊 Event data received:', event)
+        console.log('❓ Event volunteer_form:', event.volunteer_form)
+        console.log('📝 Event keys:', Object.keys(event))
         setQuestions(event.volunteer_form || [])
+        
+        // Extract application IDs from the event
+        const appIds = event.applications || []
+        console.log('📋 Application IDs found:', appIds)
+        console.log('📊 Number of applications:', appIds.length)
+        setApplicationIds(appIds)
       } catch (e) {
+        console.error('❌ Error fetching event:', e)
+        console.log('🔧 EntityId that failed:', entityId)
         setQuestions([])
+        setApplicationIds([])
       }
     }
     fetchEvent()
-  }, [eventId])
+  }, [entityId])
 
   const { data: applications = [], isLoading, error } = useQuery({
-    queryKey: ['applications', eventId],
-    queryFn: () => fetchApplications(eventId),
+    queryKey: ['applications', applicationIds],
+    queryFn: () => fetchApplications(applicationIds),
+    enabled: applicationIds.length > 0, // Only run query if we have application IDs
   })
 
   const updateStatus = async (

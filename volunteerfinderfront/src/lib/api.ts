@@ -149,12 +149,12 @@ export const api = {
     return response.json()
   },
 
-  async getVolunteersByEvent(eventId: string): Promise<Application[]> {
-    console.log(eventId)
-    const response = await fetch(`${API_BASE_URL}/applications/load?event_id=${encodeURIComponent(eventId)}`)
-    if (!response.ok) throw new Error('Failed to fetch volunteers')
-    return response.json()
-  },
+  async getVolunteersByEvent(entityId: string): Promise<Application[]> {
+  console.log(entityId)
+  const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
+  if (!response.ok) throw new Error('Failed to fetch volunteers')
+  return response.json()
+},
 
   async updateVolunteerStatus(applicationId: string, status: Application['status']): Promise<any> {
     const response = await fetch(`${API_BASE_URL}/applications/update`, {
@@ -177,5 +177,11 @@ export const api = {
     })
     if (!response.ok) throw new Error('Failed to register user')
     return response.json()
-  }
+  },
+
+  async loadApplication(entityId: string): Promise<Application> {
+  const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
+  if (!response.ok) throw new Error(`Failed to load application ${entityId}`)
+  return response.json()
+}
 } 
