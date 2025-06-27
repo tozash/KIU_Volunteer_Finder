@@ -6,10 +6,13 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary text-neutralLight font-semibold rounded-lg px-5 py-3 hover:bg-[#03514d] disabled:opacity-60 disabled:cursor-not-allowed transition;
+    @apply bg-primary text-white font-semibold rounded-lg px-4 py-2 hover:bg-[#03514d] transition disabled:opacity-60 disabled:cursor-not-allowed;
   }
   .btn-secondary {
-    @apply bg-accent text-white hover:bg-[#e35d5d];
+    @apply bg-gray-200 text-gray-700 font-semibold rounded-lg px-4 py-2 hover:bg-gray-300 disabled:opacity-60;
+  }
+  .btn-tertiary {
+    @apply bg-gray-100 text-gray-700 font-semibold rounded-lg px-4 py-2 hover:bg-gray-200 disabled:opacity-60;
   }
   .input-primary {
     @apply bg-white border border-grayBorder rounded-lg px-4 py-2 text-sm text-neutralDark placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition;
