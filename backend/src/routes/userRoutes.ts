@@ -113,7 +113,7 @@ const users: FastifyPluginAsync = async (app) => {
     }
 
     const randomUser = users[Math.floor(Math.random() * users.length)]
-    return reply.send(randomUser)
+    return reply.code(200).send(randomUser)
   })
 }
 

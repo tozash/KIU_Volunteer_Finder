@@ -49,6 +49,7 @@ const applications: FastifyPluginAsync = async (app) => {
         }
 
         const application = await createApplication(app, user_id, event_id, answers);
+        await app.db.collection('applications').doc(application.application_id).set(application);
         console.log(`✅ Created application ${application.application_id}`);
 
         await linkApplicationToEvent(app, event_id, application.application_id);
