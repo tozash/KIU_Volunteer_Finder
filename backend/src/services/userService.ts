@@ -2,6 +2,7 @@ import { FastifyInstance } from 'fastify';
 import { FieldValue, Timestamp } from 'firebase-admin/firestore';
 import { v4 as uuidv4 } from 'uuid';
 import { User } from '../types/models/user';
+import { Application } from '../types/models/application';
 import bcrypt from 'bcrypt';
 
 export async function createUser(
@@ -50,4 +51,23 @@ export async function updateCreatorEventsList(
   });
 
   console.log(`✅ Updated user='${creator_user_id}' events with event=${event_id}`);
+}
+
+export async function removeApplicationFromUser(
+  app: FastifyInstance,
+  application: Application,
+): Promise<void> {
+  const userRef = app.db.collection('users').doc(application.applicant_user_id);
+
+  const userSnap = await userRef.get();
+  if (!userSnap.exists) {
+    console.log("applicant user id doesn't exist");
+    return;
+  }
+
+  await userRef.update({
+    applications: FieldValue.arrayRemove(application.application_id),
+  });
+
+  console.log(`✅ Removed application='${application.application_id}' from user=${application.applicant_user_id}`);
 }

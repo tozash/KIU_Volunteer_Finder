@@ -7,6 +7,8 @@ import { getEntityById} from '../services/entityService';
 import { loadEvents }          from '../services/eventService';
 import { LoadEventsRequest }   from '../types/requests/loadEventsRequest';
 import { Event } from '../types/models/event';
+import { Application } from '../types/models/application';
+import { removeApplicationFromUser } from '../services/userService';
 
 
 const events: FastifyPluginAsync = async (app) => {
@@ -77,6 +79,53 @@ const events: FastifyPluginAsync = async (app) => {
         console.error('❌ Error in /load:', err);
         const status = err.message.includes('not found') ? 404 : 500;
         return reply.code(status).send({ message: err.message });
+      }
+    }
+  );
+
+  
+  app.post<{ Querystring: LoadEntityRequest; Reply: EntityUpdateStatusResponse }>(
+    '/delete',
+    async (req, reply) => {
+      try {
+        const { entity_id } = req.query;
+
+        if (!entity_id) {
+          return reply.code(400).send({ message: 'Missing event ID', entity_id: '' });
+        }
+
+        const event = await getEntityById<Event>(app, 'events', entity_id);
+
+        const applicationIds = event.applications || [];
+
+        for (const applicationId of applicationIds) {
+          const appDoc = await app.db.collection('applications').doc(applicationId).get();
+          if (!appDoc.exists) continue;
+
+          const application = appDoc.data() as Application;
+
+          await removeApplicationFromUser(app, application);
+          await app.db.collection('applications').doc(applicationId).delete();
+
+          console.log(`🗑️ Deleted application=${applicationId}`);
+        }
+
+        // Delete event itself
+        await app.db.collection('events').doc(entity_id).delete();
+
+        console.log(`🗑️ Deleted event=${entity_id}`);
+
+        return reply.code(200).send({
+          message: 'Event and its applications deleted',
+          entity_id,
+        });
+      } catch (err: any) {
+        console.error('❌ Error in /delete:', err);
+        const status = err.message.includes('not found') ? 404 : 500;
+        return reply.code(status).send({
+          message: 'Failed to delete event',
+          entity_id: '',
+        });
       }
     }
   );

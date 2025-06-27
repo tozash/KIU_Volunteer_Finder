@@ -16,7 +16,7 @@ import {LoadEntityRequest} from '../types/requests/loadEntityRequest';
 
 const applications: FastifyPluginAsync = async (app) => {
   // load application
-    app.get<{ Querystring: LoadEntityRequest }>(
+  app.get<{ Querystring: LoadEntityRequest }>(
     '/load',
     async (req, reply) => {
       try {
@@ -73,6 +73,32 @@ const applications: FastifyPluginAsync = async (app) => {
   // update application status
   app.post<{ Body: UpdateApplicationStatusRequest; Reply: EntityUpdateStatusResponse }>(
     '/update',
+    async (req, reply) => {
+      try {
+        const { application_id, updated_application_status } = req.body;
+
+        if (!application_id || !updated_application_status) {
+          return reply.code(400).send({ message: 'Invalid input', entity_id: '' });
+        }
+
+        const application = await updateApplicationStatus(app, application_id, updated_application_status);
+        console.log(`✅ Changed application status to ${application_id} to ${updated_application_status}`);;
+
+        return reply.code(201).send({
+          message: `Application status changed to ${updated_application_status}`,
+          entity_id: application_id,
+        });
+      } catch (err: any) {
+        console.error('❌ Error in /apply:', err);
+        const status = err.message === 'Event not found' || err.message === 'User not found' ? 404 : 500;
+        return reply.code(status).send({ message: err.message, entity_id: '' });
+      }
+    }
+  );
+
+  // update application status
+  app.post<{ Body: UpdateApplicationStatusRequest; Reply: EntityUpdateStatusResponse }>(
+    '/delete',
     async (req, reply) => {
       try {
         const { application_id, updated_application_status } = req.body;

@@ -18,7 +18,6 @@ export async function createApplication(
     submitted_at: Timestamp.now(),
   };
 
-  await app.db.collection('applications').doc(application.application_id).set(application);
   return application;
 }
 
