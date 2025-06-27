@@ -1,22 +1,28 @@
 import { useEffect, useState } from 'react'
-import { Link } from 'react-router-dom'
 import { useToast } from '@/components/common/Toast'
 import { useAuth } from '@/lib/useAuth'
-import { api, type Application } from '@/lib/api'
+import { api, type Application, type Event } from '@/lib/api'
+import SubmissionCard from '@/components/event/SubmissionCard'
 
 const MySubmissions = () => {
   const { user } = useAuth()
   const addToast = useToast()
-  const [applications, setApplications] = useState<Application[]>([])
+  const [applications, setApplications] = useState<(Application & { event: Event })[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
     const fetchSubmissions = async () => {
-      if (!user) return;
+      if (!user) return
       try {
         const apps = await api.getMySubmissions(String(user.user_id))
-        setApplications(apps)
+        const withEvents = await Promise.all(
+          apps.map(async (app) => ({
+            ...app,
+            event: await api.getEvent(app.event_id),
+          }))
+        )
+        setApplications(withEvents)
       } catch (err) {
         setError('Failed to load submissions')
       } finally {
@@ -30,9 +36,11 @@ const MySubmissions = () => {
     try {
       await api.updateApplicationStatus(id, 'canceled')
       addToast('Application canceled')
-      setApplications(applications => applications.map(app =>
-        app.application_id === id ? { ...app, status: 'canceled' } : app
-      ))
+      setApplications((applications) =>
+        applications.map((app) =>
+          app.application_id === id ? { ...app, status: 'canceled' } : app
+        )
+      )
     } catch (error) {
       addToast('Failed to cancel application. Please try again.')
     }
@@ -49,31 +57,17 @@ const MySubmissions = () => {
   return (
     <div className="p-4 max-w-screen-lg mx-auto">
       <h1 className="text-xl font-bold mb-2">My Submissions</h1>
-      <ul className="space-y-4">
+      <div className="space-y-4">
         {applications.map((app) => (
-          <li key={app.application_id} className="border rounded p-4">
-            <h2 className="font-semibold">Application {app.application_id}</h2>
-            <p className="text-sm text-gray-500">Status: {app.status}</p>
-            <p className="text-sm text-gray-500">Event ID: {app.event_id}</p>
-            <div className="mt-2 flex gap-2">
-              <Link
-                to={`/events/${app.event_id}`}
-                className="btn-primary px-2 py-1"
-              >
-                View Event
-              </Link>
-              {app.status !== 'canceled' && (
-                <button
-                  onClick={() => cancel(app.application_id)}
-                  className="px-2 py-1 bg-gray-300 rounded"
-                >
-                  Cancel
-                </button>
-              )}
-            </div>
-          </li>
+          <SubmissionCard
+            key={app.application_id}
+            event={app.event}
+            status={app.status}
+            applicationId={app.application_id}
+            onCancel={() => cancel(app.application_id)}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   )
 }
