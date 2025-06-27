@@ -76,6 +76,7 @@ export async function updateEvent(
 
   await ref.update({ 
     image_url: request.image_url,  
+    title: request.title,
     start_date: request.start_date,  
     end_date: request.end_date,  
     description: request.description, 
