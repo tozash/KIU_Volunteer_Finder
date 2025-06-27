@@ -42,8 +42,12 @@ export interface User {
 // API Functions
 export const api = {
   // Events
-  async getEvents(): Promise<Event[]> {
-    const response = await fetch(`${API_BASE_URL}/events/load`)
+  async getEvents(userId?: string): Promise<Event[]> {
+    let url = `${API_BASE_URL}/events/load`;
+    if (userId) {
+      url += `?user_id=${encodeURIComponent(userId)}`;
+    }
+    const response = await fetch(url)
     if (!response.ok) throw new Error('Failed to fetch events')
     return response.json()
   },

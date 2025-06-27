@@ -12,6 +12,7 @@ interface Event {
   description: string
   category: string
   volunteer_form: string[]
+  // hits: number
 }
 
 type Props = {
@@ -62,10 +63,11 @@ const EventCard = ({ event }: Props) => {
         </span>
       </div>
       <div className="p-4">
+
         <h4 className="font-semibold text-xl line-clamp-2">{event.org_title}</h4>
         <div className="mt-1 text-sm">
           <span className="font-medium">{formatDate(event.start_date)}</span>
-          <span className="block font-normal">{event.city}, {event.region}</span>
+          <span className="block font-normal">{event.city}, {event.region}, {event.country}</span>
         </div>
       </div>
     </Link>

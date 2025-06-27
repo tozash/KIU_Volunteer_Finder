@@ -1,5 +1,5 @@
 const Footer = () => (
-  <footer className="bg-neutralDark bottom-0 left-0 right-0 border-t border-grayBorder text-neutralLight text-sm py-6">
+  <footer className="fixed bottom-0 left-0 w-full bg-neutralLight border-t border-grayBorder p-4 text-center">
     <div className="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row justify-between items-center gap-4">
       <p>KaiKaci © 2025</p>
       <nav className="flex gap-6 underline-offset-4">

@@ -1,9 +1,8 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { dummyEvents } from '@/lib/dummyData'
-import type { Event } from '@/lib/dummyData'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/common/Toast'
-
+import { api } from '@/lib/api'
+import { useAuth } from '@/lib/useAuth'
 
 interface FormValues {
   title: string
@@ -17,6 +16,7 @@ interface FormValues {
 const CreateEvent = () => {
   const navigate = useNavigate()
   const addToast = useToast()
+  const { user } = useAuth()
 
   const { register, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
@@ -30,20 +30,28 @@ const CreateEvent = () => {
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
 
-  const onSubmit = (data: FormValues) => {
-    const newEvent: Event = {
-      id: dummyEvents.length + 1,
-      title: data.title,
-      date: data.date,
-      location: data.location,
-      imageUrl: data.imageUrl,
-      description: data.description,
-      status: 'open',
-      questions: data.questions.map((q) => q.value),
+  const onSubmit = async (data: FormValues) => {
+    if (!user) return;
+    try {
+      const eventPayload = {
+        user_id: String(user.id),
+        image_url: data.imageUrl,
+        start_date: data.date,
+        end_date: data.date,
+        description: data.description,
+        volunteer_form: data.questions.map((q) => q.value),
+        category: 'General',
+        org_title: data.title,
+        country: 'Unknown',
+        region: '',
+        city: data.location,
+      }
+      const res = await api.createEvent(eventPayload)
+      addToast('Event created')
+      navigate(`/events/${res.entity_id}`)
+    } catch (err) {
+      addToast('Failed to create event')
     }
-    dummyEvents.push(newEvent)
-    addToast('Event created')
-    navigate(`/events/${newEvent.id}`)
   }
 
   return (

@@ -7,7 +7,7 @@ import { useQuery } from '@tanstack/react-query'
 import { api, type Event } from '@/lib/api'
 
 const fetchEvents = async (search: string): Promise<Event[]> => {
-  const res = await fetch(`/api/events?search=${encodeURIComponent(search)}`)
+  const res = await fetch(`/api/events/loadManya`)//this mistake was done on purpose
   return res.json()
 }
 
