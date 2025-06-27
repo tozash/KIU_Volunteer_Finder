@@ -4,6 +4,8 @@ import { Event } from '../types/models/event';
 import { updateCreatorEventsList } from './userService';
 import { LoadEventsRequest } from '../types/requests/loadEventsRequest';
 import { CreateEventRequest } from '../types/requests/createEventRequest';
+import { UpdateEventRequest } from '../types/requests/updateEventRequest';
+import { getEntityById } from './entityService';
 
 
 export async function loadEvents(
@@ -58,4 +60,26 @@ export async function createEvent(
   await updateCreatorEventsList(app, event.creator_user_id, event.event_id);
 
   return event;
+}
+
+export async function updateEvent(
+  app: FastifyInstance,
+  request: UpdateEventRequest
+): Promise<boolean> {
+  const ref = app.db.collection('events').doc(request.event_id);
+  const snap = await ref.get();
+
+  if (!snap.exists) {
+    console.log("event doesn't exist")
+    return false;
+  }
+
+  await ref.update({ 
+    image_url: request.image_url,  
+    start_date: request.start_date,  
+    end_date: request.end_date,  
+    description: request.description, 
+    volunteer_form: request.volunteer_form,  
+  });
+  return true;
 }
