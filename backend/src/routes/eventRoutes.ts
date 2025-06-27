@@ -9,6 +9,8 @@ import { LoadEventsRequest }   from '../types/requests/loadEventsRequest';
 import { Event } from '../types/models/event';
 import { Application } from '../types/models/application';
 import { removeApplicationFromUser } from '../services/userService';
+import { UpdateEventRequest } from '../types/requests/updateEventRequest';
+import { updateEvent } from '../services/eventService';
 
 
 const events: FastifyPluginAsync = async (app) => {
@@ -83,7 +85,7 @@ const events: FastifyPluginAsync = async (app) => {
     }
   );
 
-  
+  // delete event and all its applications
   app.post<{ Querystring: LoadEntityRequest; Reply: EntityUpdateStatusResponse }>(
     '/delete',
     async (req, reply) => {
@@ -119,6 +121,32 @@ const events: FastifyPluginAsync = async (app) => {
           message: 'Event and its applications deleted',
           entity_id,
         });
+      } catch (err: any) {
+        console.error('❌ Error in /delete:', err);
+        const status = err.message.includes('not found') ? 404 : 500;
+        return reply.code(status).send({
+          message: 'Failed to delete event',
+          entity_id: '',
+        });
+      }
+    }
+  );
+
+  // update event
+  app.post<{ Body: UpdateEventRequest; Reply: EntityUpdateStatusResponse }>(
+    '/update',
+    async (req, reply) => {
+      try {
+        const event_id = req.body.event_id;
+
+        if (!event_id) {
+          return reply.code(400).send({ message: 'Missing event ID', entity_id: '' });
+        }
+        
+        const eventUpdated = await updateEvent(app, req.body);
+        const message = eventUpdated ? `Updated event with id=${req.body.event_id}` : `Not found event with id=${req.body.event_id} to update`;
+
+        return reply.code(200).send({ message: message, entity_id: `${req.body.event_id}` });
       } catch (err: any) {
         console.error('❌ Error in /delete:', err);
         const status = err.message.includes('not found') ? 404 : 500;
