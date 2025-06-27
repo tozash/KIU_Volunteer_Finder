@@ -5,7 +5,7 @@ import { CREATORS_BANK } from '../utils/constants';
 export async function seedUsers() {
   const ALL_USERS = [
     ...CREATORS_BANK,
-    ...Array.from({ length: 100 }, (_, i) => `user_${i + 1}`),
+    ...Array.from({ length: 20 }, (_, i) => `user_${i + 1}`),
   ];
 
   const userPromises = ALL_USERS.map(async (user_id) => {

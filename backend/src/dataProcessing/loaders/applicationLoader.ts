@@ -6,7 +6,7 @@ import { VOLUNTEER_Q_ANSWERS } from '../utils/constants';
 import { Application } from '../../types/models/application';
 
 export async function seedRandomApplications(event_id: string, questions: string[]) {
-  const USER_POOL = Array.from({ length: 100 }, (_, i) => `user_${i + 1}`);
+  const USER_POOL = Array.from({ length: 20 }, (_, i) => `user_${i + 1}`);
   const selectedUsers = faker.helpers.arrayElements(USER_POOL, 10);
 
   const applicationIds: string[] = [];

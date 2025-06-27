@@ -19,7 +19,7 @@ function pickVolunteerQuestions(): string[] {
 }
 
 export async function seedEventsFromFile(csvFilePath?: string) {
-  const DEFAULT_PATH = "C:\\Users\\v-aoniani\\Downloads\\volunteer_opportunities.csv";
+  const DEFAULT_PATH = "C:\\Users\\teona\\Downloads\\volunteer_opportunities.csv";
   const filePath = csvFilePath ? path.resolve(csvFilePath) : DEFAULT_PATH;
 
   if (!fs.existsSync(filePath)) {
