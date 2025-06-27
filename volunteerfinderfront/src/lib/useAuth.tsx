@@ -8,8 +8,7 @@ interface User {
 
 interface AuthContextValue {
   user: User | null
-  token: string | null
-  login: (data: { email: string; password: string }) => Promise<void>
+  login: (data: { user_identifier: string; password: string }) => Promise<void>
   register: (data: {
     name: string
     surname: string
@@ -17,6 +16,8 @@ interface AuthContextValue {
     dob: string
     sex: string
     password: string
+    user_id?: string
+    username?: string
   }) => Promise<void>
   logout: () => void
 }
@@ -25,54 +26,49 @@ const AuthContext = createContext<AuthContextValue | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
-  const [token, setToken] = useState<string | null>(null)
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
-    if (storedToken && storedUser) {
-      setToken(storedToken)
-      setUser(JSON.parse(storedUser))
-    }
+    if (storedUser && storedUser !== 'undefined') {
+      try {
+        setUser(JSON.parse(storedUser))
+      } catch (err) {
+        console.warn('Failed to parse stored user, clearing it', err)
+        localStorage.removeItem('user')
+      }}
   }, [])
 
   const login: AuthContextValue['login'] = async (data) => {
-    const res = await fetch('/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
-    })
+    const params = new URLSearchParams({ user_identifier: data.user_identifier, password: data.password });
+    const res = await fetch(`/api/users/login?${params.toString()}`, {
+      method: 'GET',
+    });
+
     if (!res.ok) throw new Error('Login failed')
-    const result = await res.json()
-    setToken(result.token)
-    setUser(result.user)
-    localStorage.setItem('token', result.token)
-    localStorage.setItem('user', JSON.stringify(result.user))
+    const user = await res.json()
+    setUser(user)
+    localStorage.setItem('user', JSON.stringify(user))
   }
 
   const register: AuthContextValue['register'] = async (data) => {
-    const res = await fetch('/auth/register', {
+    const res = await fetch('/api/users/signup', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
     })
     if (!res.ok) throw new Error('Registration failed')
     const result = await res.json()
-    setToken(result.token)
     setUser(result.user)
-    localStorage.setItem('token', result.token)
     localStorage.setItem('user', JSON.stringify(result.user))
   }
 
   const logout = () => {
-    setToken(null)
     setUser(null)
-    localStorage.removeItem('token')
     localStorage.removeItem('user')
   }
 
   return (
-    <AuthContext.Provider value={{ user, token, login, register, logout }}>
+    <AuthContext.Provider value={{ user, login, register, logout }}>
       {children}
     </AuthContext.Provider>
   )

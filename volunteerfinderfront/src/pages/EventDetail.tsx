@@ -3,10 +3,10 @@ import { useQuery } from '@tanstack/react-query'
 import { Link, useParams } from 'react-router-dom'
 
 import ApplicationModal from '@/components/event/ApplicationModal'
-import type { Event } from '@/lib/dummyData'
+import { api, type Event } from '@/lib/api'
 
 const fetchEvent = async (id: number): Promise<Event | undefined> => {
-  const res = await fetch(`/events/${id}`)
+  const res = await fetch(`/api/events/${id}`)
   return res.json()
 }
 
@@ -22,32 +22,61 @@ const renderMarkdown = (md: string) => {
 
 const EventDetail = () => {
   const { id } = useParams()
-  const eventId = Number(id)
+  const eventId = String(id!)
   const [open, setOpen] = useState(false)
-  const { data: event } = useQuery({
+  const { data: event, isLoading, error } = useQuery({
     queryKey: ['event', eventId],
-    queryFn: () => fetchEvent(eventId),
+    queryFn: () => fetchEvent(Number(eventId)),
   })
 
-  if (!event) return <div>Event not found</div>
+  if (isLoading) {
+    return <div className="text-center p-8">Loading event...</div>
+  }
+
+  if (error || !event) {
+    return <div className="text-center p-8 text-red-600">Event not found</div>
+  }
+
+  // Format date for display
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    })
+  }
+
+  // Determine status based on dates
+  const getStatus = (startDate: string, endDate: string) => {
+    const now = new Date()
+    const start = new Date(startDate)
+    const end = new Date(endDate)
+    
+    if (now < start) return 'open'
+    if (now > end) return 'closed'
+    return 'open'
+  }
+
+  const status = getStatus(event.start_date, event.end_date)
 
   return (
     <div>
       <img
-        src={event.imageUrl}
-        alt={event.title}
+        src={event.image_url}
+        alt={event.org_title}
         className="w-full h-64 object-cover"
       />
       <div className="max-w-screen-lg mx-auto p-4">
-        <h1 className="text-2xl font-bold mb-1">{event.title}</h1>
+        <h1 className="text-2xl font-bold mb-1">{event.org_title}</h1>
         <p className="text-gray-500 mb-4">
-          {event.date} • {event.location}
+          {formatDate(event.start_date)} • {event.city}, {event.region}, {event.country}
         </p>
         <div
           className="prose"
           dangerouslySetInnerHTML={{ __html: renderMarkdown(event.description) }}
         />
-        {event.status === 'open' && (
+        {status === 'open' && (
           <button
             className="mt-4 bg-blue-600 text-white px-4 py-2 rounded"
             onClick={() => setOpen(true)}
@@ -58,11 +87,11 @@ const EventDetail = () => {
         <ApplicationModal
           open={open}
           onClose={() => setOpen(false)}
-          eventId={event.id}
-          questions={event.questions}
+          eventId={event.event_id}
+          questions={event.volunteer_form}
         />
         <Link
-          to={`/edit-event/${event.id}`}
+          to={`/edit-event/${event.event_id}`}
           className="inline-block mt-4 text-blue-600"
         >
           Edit Event

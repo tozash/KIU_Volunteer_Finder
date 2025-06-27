@@ -1,14 +1,17 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-import { dummyEvents } from '@/lib/dummyData'
-import type { Event } from '@/lib/dummyData'
 import { useNavigate } from 'react-router-dom'
 import { useToast } from '@/components/common/Toast'
-
+import { api } from '@/lib/api'
+import { useAuth } from '@/lib/useAuth'
 
 interface FormValues {
   title: string
   date: string
-  location: string
+  country: string
+  region: string
+  city: string
+  category: string
+  org_title: string
   imageUrl: string
   description: string
   questions: { value: string }[]
@@ -17,12 +20,17 @@ interface FormValues {
 const CreateEvent = () => {
   const navigate = useNavigate()
   const addToast = useToast()
+  const { user } = useAuth()
 
   const { register, control, handleSubmit } = useForm<FormValues>({
     defaultValues: {
       title: '',
       date: '',
-      location: '',
+      country: '',
+      region: '',
+      city: '',
+      category: '',
+      org_title: '',
       imageUrl: '',
       description: '',
       questions: [{ value: '' }],
@@ -30,20 +38,32 @@ const CreateEvent = () => {
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
 
-  const onSubmit = (data: FormValues) => {
-    const newEvent: Event = {
-      id: dummyEvents.length + 1,
-      title: data.title,
-      date: data.date,
-      location: data.location,
-      imageUrl: data.imageUrl,
-      description: data.description,
-      status: 'open',
-      questions: data.questions.map((q) => q.value),
+  const onSubmit = async (data: FormValues) => {
+    if (!user) return;
+    try {
+      const eventPayload = {
+        user_id: String(user.user_id),
+        image_url: data.imageUrl,
+        start_date: data.date,
+        end_date: data.date,
+        description: data.description,
+        volunteer_form: data.questions.map((q) => q.value),
+        category: data.category,
+        org_title: data.org_title,
+        country: data.country,
+        region: data.region,
+        city: data.city,
+      }
+      const res = await api.createEvent(eventPayload)
+      if (res.entity_id && res.entity_id !== 'NaN') {
+        addToast('Event created')
+        navigate(`/events/${res.entity_id}`)
+      } else {
+        addToast('Event created, but could not determine event ID')
+      }
+    } catch (err) {
+      addToast('Failed to create event')
     }
-    dummyEvents.push(newEvent)
-    addToast('Event created')
-    navigate(`/events/${newEvent.id}`)
   }
 
   return (
@@ -52,7 +72,11 @@ const CreateEvent = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
         <input {...register('title')} placeholder="Title" className="input-primary w-full" />
         <input type="date" {...register('date')} className="input-primary w-full" />
-        <input {...register('location')} placeholder="Location" className="input-primary w-full" />
+        <input {...register('country')} placeholder="Country" className="input-primary w-full" />
+        <input {...register('region')} placeholder="Region" className="input-primary w-full" />
+        <input {...register('city')} placeholder="City" className="input-primary w-full" />
+        <input {...register('category')} placeholder="Category" className="input-primary w-full" />
+        <input {...register('org_title')} placeholder="Organization" className="input-primary w-full" />
         <input {...register('imageUrl')} placeholder="Image URL" className="input-primary w-full" />
         <textarea {...register('description')} placeholder="Description" className="input-primary w-full" />
 

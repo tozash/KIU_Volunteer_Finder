@@ -3,9 +3,10 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/lib/useAuth'
+import { api } from '@/lib/api'
 
 const loginSchema = z.object({
-  email: z.string().email(),
+  email: z.string(),
   password: z.string().min(6),
 })
 
@@ -38,13 +39,33 @@ const AuthModal = ({ open, onClose }: Props) => {
     resolver: zodResolver(mode === 'login' ? loginSchema : registerSchema),
   })
 
+
   const onSubmit = async (values: LoginForm | RegisterForm) => {
     if (mode === 'login') {
-      await login(values as LoginForm)
+      try {
+        await login({ user_identifier: values.email, password: values.password })
+        onClose()
+      } catch (err) {
+        console.log(err)
+      }
     } else {
-      await register(values as RegisterForm)
+      try {
+        const registerData = values as RegisterForm
+        const signupRequest = {
+          first_name: registerData.name,
+          last_name: registerData.surname,
+          age: 25, // You might want to calculate this from dob or add age field
+          sex: registerData.sex as 'Male' | 'Female',
+          email: registerData.email,
+          username: registerData.email, // Using email as username
+          password: registerData.password
+        }
+        await api.registerUser(signupRequest)
+        onClose()
+      } catch (err) {
+        console.log(err)
+      }
     }
-    onClose()
   }
 
   if (!open) return null
@@ -100,6 +121,7 @@ const AuthModal = ({ open, onClose }: Props) => {
           <button
             type="submit"
             className="btn-primary w-full"
+            onClick={() => handleSubmit(onSubmit)()}
           >
             {mode === 'login' ? 'Login' : 'Register'}
           </button>

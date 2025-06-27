@@ -1,36 +1,78 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useQuery } from '@tanstack/react-query'
 
 import VolunteerCard from '@/components/event/VolunteerCard'
-import { dummyApplications } from '@/lib/dummyData'
+import { api, type Application, type Event } from '@/lib/api'
 import { useToast } from '@/components/common/Toast'
+
+const fetchApplications = async (eventId: string): Promise<Application[]> => {
+  try {
+    return await api.getVolunteersByEvent(eventId)
+  } catch (error) {
+    console.error('Error fetching applications:', error)
+    return []
+  }
+}
 
 const Volunteers = () => {
   const { id } = useParams()
-  const eventId = Number(id)
+  const eventId = id!
   const [statusFilter, setStatusFilter] = useState('all')
   const [sort, setSort] = useState<'name' | 'status'>('name')
   const addToast = useToast()
-  const [apps, setApps] = useState(
-    dummyApplications.filter((a) => a.eventId === eventId),
-  )
+  const [questions, setQuestions] = useState<string[]>([])
 
-  const updateStatus = (
-    appId: number,
+  useEffect(() => {
+    const fetchEvent = async () => {
+      if (!eventId) return;
+      try {
+        const event: Event = await api.getEvent(eventId)
+        setQuestions(event.volunteer_form || [])
+      } catch (e) {
+        setQuestions([])
+      }
+    }
+    fetchEvent()
+  }, [eventId])
+
+  const { data: applications = [], isLoading, error } = useQuery({
+    queryKey: ['applications', eventId],
+    queryFn: () => fetchApplications(eventId),
+  })
+
+  const updateStatus = async (
+    appId: string,
     status: 'accepted' | 'denied' | 'canceled',
   ) => {
-    setApps((prev) =>
-      prev.map((a) => (a.id === appId ? { ...a, status } : a)),
-    )
-    addToast(`Marked as ${status}`)
+    try {
+      await api.updateApplicationStatus(appId, status)
+      addToast(`Marked as ${status}`)
+      // Refetch applications to get updated data
+      window.location.reload()
+    } catch (error) {
+      console.error('Error updating application status:', error)
+      addToast('Failed to update status. Please try again.')
+    }
   }
 
-  const filtered = apps.filter(
+  if (isLoading) {
+    return <div className="p-4 max-w-screen-lg mx-auto">Loading volunteers...</div>
+  }
+
+  if (error) {
+    return <div className="p-4 max-w-screen-lg mx-auto text-red-600">Error loading volunteers. Please try again later.</div>
+  }
+
+  const filtered = applications.filter(
     (a) => statusFilter === 'all' || a.status === statusFilter,
   )
 
   const sorted = [...filtered].sort((a, b) => {
-    if (sort === 'name') return a.name.localeCompare(b.name)
+    if (sort === 'name') {
+      // Since we don't have name in the API response, we'll sort by ID
+      return a.application_id.localeCompare(b.application_id)
+    }
     return a.status.localeCompare(b.status)
   })
 
@@ -54,15 +96,16 @@ const Volunteers = () => {
           onChange={(e) => setSort(e.target.value as 'name' | 'status')}
           className="input-primary w-40"
         >
-          <option value="name">Sort by Name</option>
+          <option value="name">Sort by ID</option>
           <option value="status">Sort by Status</option>
         </select>
       </div>
       <div className="space-y-2">
         {sorted.map((app) => (
           <VolunteerCard
-            key={app.id}
+            key={app.application_id}
             application={app}
+            questions={questions}
             onStatusChange={updateStatus}
           />
         ))}

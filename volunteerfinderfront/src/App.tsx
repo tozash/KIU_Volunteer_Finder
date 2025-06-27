@@ -8,11 +8,12 @@ import EditEvent from '@/pages/EditEvent'
 import MyEvents from '@/pages/MyEvents'
 import Volunteers from '@/pages/Volunteers'
 import MySubmissions from '@/pages/MySubmissions'
+import { Link } from 'react-router-dom'
 
 
 function App() {
   return (
-    <>
+    <div className="flex flex-col vh-screen">
       <NavBar />
       <main className="p-4 max-w-screen-xl mx-auto">
         <Routes>
@@ -20,7 +21,8 @@ function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/edit-event/:id" element={<EditEvent />} />
           <Route path="/create-event" element={<CreateEvent />} />
-          <Route path="/my-events" element={<MyEvents />} />
+          <Route path="/myevents" element={<MyEvents />} />
+          <Route path="/mysubmissions" element={<MySubmissions />} />
           <Route
             path="/events/:id/volunteers"
             element={<Volunteers />}
@@ -29,7 +31,7 @@ function App() {
         </Routes>
       </main>
       <Footer />
-    </>
+    </div>
 
   )
 }

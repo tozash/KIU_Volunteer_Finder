@@ -1,11 +1,8 @@
 import { useFieldArray, useForm } from 'react-hook-form'
-
-import { dummyEvents } from '@/lib/dummyData'
-import type { Event } from '@/lib/dummyData'
-
 import { useNavigate, useParams } from 'react-router-dom'
 import { useToast } from '@/components/common/Toast'
-
+import { api } from '@/lib/api'
+import { useEffect, useState } from 'react'
 
 interface FormValues {
   title: string
@@ -20,35 +17,73 @@ const EditEvent = () => {
   const { id } = useParams()
   const navigate = useNavigate()
   const addToast = useToast()
-  const event = dummyEvents.find((e) => e.id === Number(id))
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [event, setEvent] = useState<any>(null)
 
-  if (!event) {
-    return <div className="p-4 max-w-screen-lg mx-auto">Event not found</div>
-  }
+  useEffect(() => {
+    const fetchEvent = async () => {  
+      try {
+        if (!id) return;
+        const evt = await api.getEvent(id)
+        setEvent(evt)
+      } catch (err) {
+        setError('Event not found')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchEvent()
+  }, [id])
 
-  const { register, control, handleSubmit } = useForm<FormValues>({
+  const { register, control, handleSubmit, reset } = useForm<FormValues>({
     defaultValues: {
-      title: event?.title ?? '',
-      date: event?.date ?? '',
-      location: event?.location ?? '',
-      imageUrl: event?.imageUrl ?? '',
-      description: event?.description ?? '',
-      questions: event ? event.questions.map((q) => ({ value: q })) : [{ value: '' }],
+      title: '',
+      date: '',
+      location: '',
+      imageUrl: '',
+      description: '',
+      questions: [{ value: '' }],
     },
   })
   const { fields, append, remove } = useFieldArray({ control, name: 'questions' })
 
-  const onSubmit = (data: FormValues) => {
-    if (!event) return
-    event.title = data.title
-    event.date = data.date
-    event.location = data.location
-    event.imageUrl = data.imageUrl
-    event.description = data.description
-    event.questions = data.questions.map((q) => q.value)
-    addToast('Event updated')
-    navigate(`/events/${event.id}`)
+  useEffect(() => {
+    if (event) {
+      reset({
+        title: event.org_title || '',
+        date: event.start_date || '',
+        location: event.city || '',
+        imageUrl: event.image_url || '',
+        description: event.description || '',
+        questions: event.volunteer_form ? event.volunteer_form.map((q: string) => ({ value: q })) : [{ value: '' }],
+      })
+    }
+  }, [event, reset])
+
+  const onSubmit = async (data: FormValues) => {
+    if (!id) return
+    try {
+      const eventPayload = {
+        event_id: id,
+        org_title: data.title,
+        start_date: data.date,
+        end_date: data.date,
+        city: data.location,
+        image_url: data.imageUrl,
+        description: data.description,
+        volunteer_form: data.questions.map((q) => q.value),
+      }
+      await api.updateEvent(eventPayload)
+      addToast('Event updated')
+      navigate(`/events/${id}`)
+    } catch (err) {
+      addToast('Failed to update event')
+    }
   }
+
+  if (loading) return <div className="p-4 max-w-screen-lg mx-auto">Loading...</div>
+  if (error) return <div className="p-4 max-w-screen-lg mx-auto text-red-600">{error}</div>
 
   return (
     <div className="p-4 max-w-screen-lg mx-auto">
