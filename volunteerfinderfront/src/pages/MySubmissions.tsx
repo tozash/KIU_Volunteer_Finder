@@ -1,52 +1,49 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
 import { useToast } from '@/components/common/Toast'
-
-import { api, type Application, type Event } from '@/lib/api'
-
-const fetchMyApplications = async (): Promise<Application[]> => {
-  try {
-    const applications = await api.getApplications()
-    // For now, filter by a dummy user ID - in a real app this would come from auth context
-    const dummyUserId = 'dummy-user-id'
-    return applications.filter(app => app.user_id === dummyUserId)
-  } catch (error) {
-    console.error('Error fetching applications:', error)
-    return []
-  }
-}
-
-const fetchEvent = async (eventId: string): Promise<Event> => {
-  return api.getEvent(eventId)
-}
+import { useAuth } from '@/lib/useAuth'
+import { api, type Application } from '@/lib/api'
 
 const MySubmissions = () => {
+  const { user } = useAuth()
   const addToast = useToast()
+  const [applications, setApplications] = useState<Application[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  const { data: applications = [], isLoading, error } = useQuery({
-    queryKey: ['my-applications'],
-    queryFn: fetchMyApplications,
-  })
+  useEffect(() => {
+    const fetchSubmissions = async () => {
+      if (!user) return;
+      try {
+        const apps = await api.getMySubmissions(String(user.user_id))
+        setApplications(apps)
+      } catch (err) {
+        setError('Failed to load submissions')
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSubmissions()
+  }, [user])
 
   const cancel = async (id: string) => {
     try {
       await api.updateApplicationStatus(id, 'canceled')
       addToast('Application canceled')
-      // Refetch applications to get updated data
-      window.location.reload()
+      setApplications(applications => applications.map(app =>
+        app.application_id === id ? { ...app, status: 'canceled' } : app
+      ))
     } catch (error) {
-      console.error('Error canceling application:', error)
       addToast('Failed to cancel application. Please try again.')
     }
   }
 
-  if (isLoading) {
+  if (loading) {
     return <div className="p-4 max-w-screen-lg mx-auto">Loading your submissions...</div>
   }
 
   if (error) {
-    return <div className="p-4 max-w-screen-lg mx-auto text-red-600">Error loading submissions. Please try again later.</div>
+    return <div className="p-4 max-w-screen-lg mx-auto text-red-600">{error}</div>
   }
 
   return (

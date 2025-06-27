@@ -14,7 +14,7 @@ const MyEvents = () => {
     const fetchEvents = async () => {
       if (!user) return;
       try {
-        const allEvents = await api.getEvents(String(user.id))
+        const allEvents = await api.getEvents(String(user.user_id))
         setEvents(allEvents)
       } catch (err) {
         setError('Failed to load events')

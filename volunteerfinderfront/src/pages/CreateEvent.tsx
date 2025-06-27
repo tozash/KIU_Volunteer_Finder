@@ -7,7 +7,11 @@ import { useAuth } from '@/lib/useAuth'
 interface FormValues {
   title: string
   date: string
-  location: string
+  country: string
+  region: string
+  city: string
+  category: string
+  org_title: string
   imageUrl: string
   description: string
   questions: { value: string }[]
@@ -22,7 +26,11 @@ const CreateEvent = () => {
     defaultValues: {
       title: '',
       date: '',
-      location: '',
+      country: '',
+      region: '',
+      city: '',
+      category: '',
+      org_title: '',
       imageUrl: '',
       description: '',
       questions: [{ value: '' }],
@@ -34,21 +42,25 @@ const CreateEvent = () => {
     if (!user) return;
     try {
       const eventPayload = {
-        user_id: String(user.id),
+        user_id: String(user.user_id),
         image_url: data.imageUrl,
         start_date: data.date,
         end_date: data.date,
         description: data.description,
         volunteer_form: data.questions.map((q) => q.value),
-        category: 'General',
-        org_title: data.title,
-        country: 'Unknown',
-        region: '',
-        city: data.location,
+        category: data.category,
+        org_title: data.org_title,
+        country: data.country,
+        region: data.region,
+        city: data.city,
       }
       const res = await api.createEvent(eventPayload)
-      addToast('Event created')
-      navigate(`/events/${res.entity_id}`)
+      if (res.entity_id && res.entity_id !== 'NaN') {
+        addToast('Event created')
+        navigate(`/events/${res.entity_id}`)
+      } else {
+        addToast('Event created, but could not determine event ID')
+      }
     } catch (err) {
       addToast('Failed to create event')
     }
@@ -60,7 +72,11 @@ const CreateEvent = () => {
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-2 max-w-lg mx-auto">
         <input {...register('title')} placeholder="Title" className="input-primary w-full" />
         <input type="date" {...register('date')} className="input-primary w-full" />
-        <input {...register('location')} placeholder="Location" className="input-primary w-full" />
+        <input {...register('country')} placeholder="Country" className="input-primary w-full" />
+        <input {...register('region')} placeholder="Region" className="input-primary w-full" />
+        <input {...register('city')} placeholder="City" className="input-primary w-full" />
+        <input {...register('category')} placeholder="Category" className="input-primary w-full" />
+        <input {...register('org_title')} placeholder="Organization" className="input-primary w-full" />
         <input {...register('imageUrl')} placeholder="Image URL" className="input-primary w-full" />
         <textarea {...register('description')} placeholder="Description" className="input-primary w-full" />
 

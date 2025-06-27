@@ -16,6 +16,8 @@ interface AuthContextValue {
     dob: string
     sex: string
     password: string
+    user_id?: string
+    username?: string
   }) => Promise<void>
   logout: () => void
 }

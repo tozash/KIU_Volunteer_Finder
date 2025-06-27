@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useAuth } from '@/lib/useAuth'
+import { api } from '@/lib/api'
 
 const loginSchema = z.object({
   email: z.string(),
@@ -48,9 +49,23 @@ const AuthModal = ({ open, onClose }: Props) => {
         console.log(err)
       }
     } else {
-      await register(values as RegisterForm)
+      try {
+        const registerData = values as RegisterForm
+        const signupRequest = {
+          first_name: registerData.name,
+          last_name: registerData.surname,
+          age: 25, // You might want to calculate this from dob or add age field
+          sex: registerData.sex as 'Male' | 'Female',
+          email: registerData.email,
+          username: registerData.email, // Using email as username
+          password: registerData.password
+        }
+        await api.registerUser(signupRequest)
+        onClose()
+      } catch (err) {
+        console.log(err)
+      }
     }
-    onClose()
   }
 
   if (!open) return null

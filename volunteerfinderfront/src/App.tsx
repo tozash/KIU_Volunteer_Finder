@@ -8,6 +8,7 @@ import EditEvent from '@/pages/EditEvent'
 import MyEvents from '@/pages/MyEvents'
 import Volunteers from '@/pages/Volunteers'
 import MySubmissions from '@/pages/MySubmissions'
+import { Link } from 'react-router-dom'
 
 
 function App() {
@@ -20,7 +21,8 @@ function App() {
           <Route path="/events/:id" element={<EventDetail />} />
           <Route path="/edit-event/:id" element={<EditEvent />} />
           <Route path="/create-event" element={<CreateEvent />} />
-          <Route path="/my-events" element={<MyEvents />} />
+          <Route path="/myevents" element={<MyEvents />} />
+          <Route path="/mysubmissions" element={<MySubmissions />} />
           <Route
             path="/events/:id/volunteers"
             element={<Volunteers />}

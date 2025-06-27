@@ -1,15 +1,14 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 
 import VolunteerCard from '@/components/event/VolunteerCard'
-import { api, type Application } from '@/lib/api'
+import { api, type Application, type Event } from '@/lib/api'
 import { useToast } from '@/components/common/Toast'
 
 const fetchApplications = async (eventId: string): Promise<Application[]> => {
   try {
-    const applications = await api.getApplications()
-    return applications.filter(app => app.event_id === eventId)
+    return await api.getVolunteersByEvent(eventId)
   } catch (error) {
     console.error('Error fetching applications:', error)
     return []
@@ -22,6 +21,20 @@ const Volunteers = () => {
   const [statusFilter, setStatusFilter] = useState('all')
   const [sort, setSort] = useState<'name' | 'status'>('name')
   const addToast = useToast()
+  const [questions, setQuestions] = useState<string[]>([])
+
+  useEffect(() => {
+    const fetchEvent = async () => {
+      if (!eventId) return;
+      try {
+        const event: Event = await api.getEvent(eventId)
+        setQuestions(event.volunteer_form || [])
+      } catch (e) {
+        setQuestions([])
+      }
+    }
+    fetchEvent()
+  }, [eventId])
 
   const { data: applications = [], isLoading, error } = useQuery({
     queryKey: ['applications', eventId],
@@ -92,6 +105,7 @@ const Volunteers = () => {
           <VolunteerCard
             key={app.application_id}
             application={app}
+            questions={questions}
             onStatusChange={updateStatus}
           />
         ))}

@@ -6,8 +6,8 @@ import { useSearchParams } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { api, type Event } from '@/lib/api'
 
-const fetchEvents = async (search: string): Promise<Event[]> => {
-  const res = await fetch(`/api/events/loadManya`)//this mistake was done on purpose
+const fetchEvents = async (): Promise<Event[]> => {
+  const res = await fetch(`/api/events/loadMany`)//this mistake was done on purpose
   return res.json()
 }
 
@@ -18,7 +18,7 @@ const Landing = () => {
 
   const { data: events = [], isLoading, error } = useQuery({
     queryKey: ['events', debounced],
-    queryFn: () => fetchEvents(debounced),
+    queryFn: () => fetchEvents(),
   })
 
   if (isLoading) {
