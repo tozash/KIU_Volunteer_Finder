@@ -96,6 +96,7 @@ export const api = {
   async loadApplication(entityId: string): Promise<Application> {
     const response = await fetch(`${API_BASE_URL}/applications/load?entity_id=${encodeURIComponent(entityId)}`)
     if (!response.ok) throw new Error(`Failed to load application ${entityId}`)
+    console.log(response)
     return response.json()
   },
 
