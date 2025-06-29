@@ -1,6 +1,7 @@
-secrets 
+secrets
 secrets/
 *.json
 .env
 *.key
 *.pem
+node_modules/
